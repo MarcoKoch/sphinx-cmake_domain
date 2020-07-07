@@ -37,7 +37,13 @@ extensions = [
   My first variable ever created!
 ```
 
-The following fields are supported:
+The following options are supported:
+
+| Option      | Description                                      |
+|-------------|--------------------------------------------------|
+| `:noindex:` | Don't add this variable description to the index |
+
+The following doc fields are supported:
 
 | Field       | Description                       |
 |-------------|-----------------------------------|
@@ -58,7 +64,13 @@ The following fields are supported:
   This function does the same, but supports much fancier arguments.
 ```
 
-The following fields are supported:
+The following options are supported:
+
+| Option      | Description                                            |
+|-------------|--------------------------------------------------------|
+| `:noindex:` | Don't add this macro/function description to the index |
+
+The following doc fields are supported:
 
 | Field       | Description                                                                |
 |-------------|----------------------------------------------------------------------------|
@@ -75,6 +87,11 @@ The following fields are supported:
 
 The module name may optionally have a `.cmake` extension. Whether the extension is displayed or not is controlled by the `cmake_modules_show_extension` configuration setting, regardless of whether it is present in the definition.
 
+The following options are supported:
+
+| Option      | Description                                    |
+|-------------|------------------------------------------------|
+| `:noindex:` | Don't add this module description to the index |
 
 ### Referencing CMake entities
 
