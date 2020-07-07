@@ -111,6 +111,6 @@ This extension is similar to the [sphinxcontrib-cmakedomain](https://github.com/
 
 ## Contact
 
-If your request does not fit into the issue tracker, please drop me an E-mail at <marco-koch@t-online.de>.
+This project is developed by Marco Koch <marco-koch@t-online.de>.
 
-Please note that I'm developing this extension in my spare time. It may thus take a while until I find the time to answer. If you don't hear back within two weeks, feel free to send me a reminder.
+Please note that I'm working on this extension in my spare time. It may thus take a while until I find the time to answer. If you don't hear back within two weeks, feel free to send me a reminder.
