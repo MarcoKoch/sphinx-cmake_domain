@@ -32,17 +32,23 @@
 import setuptools
 
 
+with open("README.md", "r") as f:
+    readme_content = f.read()
+
+
 setuptools.setup(
     name = "sphinx-cmake_domain",
     version = "0.1.0.dev1",
     author = "Marco Koch",
     author_email = "marco-koch@t-online.de",
     description = "A Sphinx extension that adds a CMake domain",
+    long_description = readme_content,
+    long_description_content_type = "text/markdown",
     url = "https://github.com/marcokoch/sphinx-cmake_domain",
     project_urls = {
         "Source": "https://github.com/marcokoch/sphinx-cmake_domain",
         "Tracker": "https://github.com/marcokoch/sphinx-cmake_domain/issues"
-    }
+    },
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Framework :: Sphinx :: Extension",
