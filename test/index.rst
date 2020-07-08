@@ -25,6 +25,11 @@ Documenting variables
     :default: ON
 
 
+.. cmake:var:: MY_OPTION
+
+    This is a second definition of the same option.
+
+
 Referencing CMake entities
 --------------------------
 

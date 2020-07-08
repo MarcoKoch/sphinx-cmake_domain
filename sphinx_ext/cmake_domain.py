@@ -39,7 +39,6 @@ from sphinx.directives import ObjectDescription
 from sphinx.domains import Domain, Index, ObjType
 from sphinx.locale import _, __
 from sphinx.roles import XRefRole
-from sphinx.util.logging import getLogger
 from sphinx.util.docfields import Field
 from sphinx.util.nodes import make_id, make_refnode
 
@@ -48,9 +47,6 @@ __version__ = "0.1.0.dev1"
 __author__ = "Marco Koch"
 __copyright__ = "Copyright 2020, Marco Koch"
 __license__ = "BSD 3-Clause"
-
-
-_logger = getLogger(__name__)
 
 
 def _get_index_sort_str(name, env):
@@ -88,14 +84,14 @@ class CmakeEntityDescription(ObjectDescription):
     
     
     def add_target_and_index(self, name_cls, sig, signode):
-        node_id = make_id(self.env, self.state.document, "cmake",
-            "-".join([self.entity_type, sig]))
+        domain = self.env.get_domain("cmake")
+        node_id = domain.make_entity_node_id(sig, self.entity_type,
+            self.state.document)
         signode["ids"].append(node_id)
         
         if "noindex" not in self.options:
             # Register the node at the domain, so it can be cross-referenced and
             # appears in the CMake index
-            domain = self.env.get_domain("cmake")
             domain.add_entity(sig, self.entity_type, node_id, signode)
         
             # Add an entry in the global index
@@ -157,9 +153,9 @@ class CMakeDomain(Domain):
     }
     initial_data = {
         "entities": {
-            "variable": {}, # name -> node_id, docname
-            "function": {}, # name -> node_id, docname
-            "module": {}, # name -> node_id, docname
+            "variable": defaultdict(list), # name -> [(node_id, docname)]
+            "function": defaultdict(list), # name -> [(node_id, docname)]
+            "module": defaultdict(list), # name -> [(node_id, docname)]
         }
     }
     roles = {
@@ -184,26 +180,34 @@ class CMakeDomain(Domain):
     def entities(self):
         entities = []
         for entity_type in self.data["entities"].keys():
-            entities += [(name, entity_type, node_id, docname)
-                for name, (node_id, docname) 
-                in self.data["entities"][entity_type].items()]
+            for name, descriptions in self.data["entities"][entity_type].items():
+                entities += [(name, entity_type, node_id, docname)
+                    for node_id, docname in descriptions]
 
         return entities
     
     
+    def make_entity_node_id(self, name, entity_type, document):
+        """Generates a node ID for an entity description"""
+        
+        node_id = make_id(self.env, document, "cmake",
+            "-".join([entity_type, name]))
+        
+        # If there is already an other description for the same entity in the
+        # current document, we append a number to make the ID unique. This
+        # allows us to reference the individual descriptions from the indices.
+        alias_cnt = len(self.data["entities"][entity_type][name])
+        if alias_cnt != 0:
+            node_id += "-" + str(alias_cnt)
+        
+        return node_id
+    
+    
     def add_entity(self, name, entity_type, node_id, location):
         """Called by our directives to register a documented entity."""
-        
-        if name in self.data["entities"][entity_type]:
-            other = self.data["entities"][entity_type][name]
-            _logger.warning(
-                __("Duplicate description of %s %s. "
-                    "Previously defined in: %s. "
-                    "Use :noindex: for one of the descriptions."),
-                self.object_types[entity_type].lname, name, other[2],
-                location=location)
-        
-        self.data["entities"][entity_type][name] = (node_id, self.env.docname)
+
+        self.data["entities"][entity_type][name].append(
+            (node_id, self.env.docname))
     
     
     def get_full_qualified_name(self, node):
@@ -214,8 +218,9 @@ class CMakeDomain(Domain):
             contnode):
         entity_type = self._xref_type_to_entity_type[typ]
             
-        for name, (node_id, docname) in self.data["entities"][entity_type].items():
-            if name == target:
+        for name, descriptions in self.data["entities"][entity_type].items():
+            if name == target and len(descriptions[0]) != 0:
+                node_id, docname = descriptions[0]
                 label = " ".join([self.object_types[entity_type].lname, name])
                 return make_refnode(builder, fromdocname, docname, node_id,
                     contnode, label)
