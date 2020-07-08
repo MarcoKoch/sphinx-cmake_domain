@@ -81,6 +81,8 @@ The following doc fields are supported:
 
 <sup>1</sup> Aliases are: `:parameter:`, `:arg:`, `:argument:`, `:keyword:` and `:option:`
 
+Documented parameters can be referenced from within a macro/function description using the `:cmake:param:` role.
+
 
 ### Documenting modules
 
