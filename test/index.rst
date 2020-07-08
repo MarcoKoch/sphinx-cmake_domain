@@ -42,3 +42,10 @@ This links :cmake:var:`MY_VARIABLE` using ``:cmake:var:``.
 This links :cmake:var:`MY_CACHE_VARIABLE` using ``:cmake:var:``.
 
 This links :cmake:var:`MY_OPTION` using ``:cmake:var:``.
+
+
+Indices
+-------
+
+* :ref:`genindex`
+* :ref:`cmake-index`
