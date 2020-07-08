@@ -53,14 +53,6 @@ __license__ = "BSD 3-Clause"
 _logger = getLogger(__name__)
 
 
-# Maps entity types (as used in CMakeDomain.data["entities"]) localized labels
-_entity_type_labels = {
-    "variable": _("CMake Variable"),
-    "function": _("CMake Macro/Function"),
-    "module": _("CMake Module")
-}
-
-
 def _get_index_sort_str(name, env):
     """
     Returns a string by which an entity with the given name shall be sorted in
@@ -96,22 +88,22 @@ class CmakeEntityDescription(ObjectDescription):
     
     
     def add_target_and_index(self, name_cls, sig, signode):
-        node_id = make_id(self.env, self.state.document, "cmake.",
-            ".".join([self.entity_type, sig]))
+        node_id = make_id(self.env, self.state.document, "cmake",
+            "-".join([self.entity_type, sig]))
         signode["ids"].append(node_id)
         
         if "noindex" not in self.options:
-            # Add an entry in the global index
-            key = _get_index_sort_str(sig, self.env)[0].upper()
-            index_text = "{} ({})".format(
-                sig, _entity_type_labels[self.entity_type])
-            self.indexnode["entries"].append(
-                ("single", index_text, node_id, "", key))
-            
             # Register the node at the domain, so it can be cross-referenced and
             # appears in the CMake index
             domain = self.env.get_domain("cmake")
             domain.add_entity(sig, self.entity_type, node_id, signode)
+        
+            # Add an entry in the global index
+            key = _get_index_sort_str(sig, self.env)[0].upper()
+            index_text = "{} ({})".format(
+                sig, domain.object_types[self.entity_type].lname)
+            self.indexnode["entries"].append(
+                ("single", index_text, node_id, "", key))
     
 
 class CMakeVariableDescription(CmakeEntityDescription):
@@ -144,7 +136,7 @@ class CMakeIndex(Index):
             
             # dispname, subtype, docname, anchor, extra, qualifier, description
             content[key].append((name, 0, docname, node_id, docname, "",
-                _entity_type_labels[entity_type]))
+                self.domain.object_types[entity_type].lname))
         
         return sorted(content.items()), True
 
@@ -158,7 +150,9 @@ class CMakeDomain(Domain):
     directives = {"var": CMakeVariableDescription}
     indices = [CMakeIndex]
     object_types = {
-        "variable": ObjType(_("variable"), "var")
+        "variable": ObjType(_("CMake variable"), "var"),
+        "function": ObjType(_("CMake macro/function"), "macro", "function"),
+        "module": ObjType(_("CMake module"), "module")
     }
     initial_data = {
         "entities": {
@@ -176,7 +170,7 @@ class CMakeDomain(Domain):
     
     
     # Maps the type of a xref role to the entity type referenced by that role
-    # (as used in self.data["entities"]).
+    # (as used in object_types).
     _xref_type_to_entity_type = {
         "var": "variable",
         "func": "function",
@@ -205,7 +199,7 @@ class CMakeDomain(Domain):
                 __("Duplicate description of %s %s. "
                     "Previously defined in: %s. "
                     "Use :noindex: for one of the descriptions."),
-                _entity_type_labels[entity_type], name, other[2],
+                self.object_types[entity_type].lname, name, other[2],
                 location=location)
         
         self.data["entities"][entity_type][name] = (node_id, self.env.docname)
@@ -221,8 +215,9 @@ class CMakeDomain(Domain):
             
         for name, (node_id, docname) in self.data["entities"][entity_type].items():
             if name == target:
+                label = " ".join([self.object_types[entity_type].lname, name])
                 return make_refnode(builder, fromdocname, docname, node_id,
-                    contnode, " ".join([_entity_type_labels[entity_type], name]))
+                    contnode, label)
         
         return None
 
@@ -244,7 +239,6 @@ def setup(app):
     # Return extension metadata
     return {
         "version": __version__,
-        "env_version": 0,
         "parallel_read_safe": True,
         "parallel_write_safe": True
     }
