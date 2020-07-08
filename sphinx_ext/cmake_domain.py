@@ -38,9 +38,10 @@ from sphinx.addnodes import desc_name, desc_signature
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Domain, Index, ObjType
 from sphinx.locale import _, __
+from sphinx.roles import XRefRole
 from sphinx.util.logging import getLogger
 from sphinx.util.docfields import Field
-from sphinx.util.nodes import make_id
+from sphinx.util.nodes import make_id, make_refnode
 
 
 __version__ = "0.1.0.dev1"
@@ -52,7 +53,8 @@ __license__ = "BSD 3-Clause"
 _logger = getLogger(__name__)
 
 
-_entity_type_strings = {
+# Maps entity types (as used in CMakeDomain.data["entities"]) localized labels
+_entity_type_labels = {
     "variable": _("CMake Variable"),
     "function": _("CMake Macro/Function"),
     "module": _("CMake Module")
@@ -102,7 +104,7 @@ class CmakeEntityDescription(ObjectDescription):
             # Add an entry in the global index
             key = _get_index_sort_str(sig, self.env)[0].upper()
             index_text = "{} ({})".format(
-                sig, _entity_type_strings[self.entity_type])
+                sig, _entity_type_labels[self.entity_type])
             self.indexnode["entries"].append(
                 ("single", index_text, node_id, "", key))
             
@@ -132,17 +134,17 @@ class CMakeIndex(Index):
     
     
     def generate(self, docnames = None):
-        entries = ([(_get_index_sort_str(entity[0], self.domain.env), entity) for
-            entity in self.domain.entities])
+        entries = ([(_get_index_sort_str(entity[0], self.domain.env), entity)
+            for entity in self.domain.entities])
         entries = sorted(entries, key = lambda entry: entry[0])
         
         content = defaultdict(list)
-        for sort_str, (name, typ, node_id, docname) in entries:
+        for sort_str, (name, entity_type, node_id, docname) in entries:
             key = sort_str[0].upper()
             
             # dispname, subtype, docname, anchor, extra, qualifier, description
             content[key].append((name, 0, docname, node_id, docname, "",
-                _entity_type_strings[typ]))
+                _entity_type_labels[entity_type]))
         
         return sorted(content.items()), True
 
@@ -159,40 +161,70 @@ class CMakeDomain(Domain):
         "variable": ObjType(_("variable"), "var")
     }
     initial_data = {
-        "entities" : {
+        "entities": {
             "variable": {}, # name -> node_id, docname
             "function": {}, # name -> node_id, docname
             "module": {}, # name -> node_id, docname
         }
+    }
+    roles = {
+        "var": XRefRole(),
+        "func": XRefRole(),
+        "macro": XRefRole(),
+        "module": XRefRole()
+    }
+    
+    
+    # Maps the type of a xref role to the entity type referenced by that role
+    # (as used in self.data["entities"]).
+    _xref_type_to_entity_type = {
+        "var": "variable",
+        "func": "function",
+        "macro": "function",
+        "module": "module"
     }
     
     
     @property
     def entities(self):
         entities = []
-        for typ in self.data["entities"].keys():
-            entities += [(name, typ, node_id, docname) for 
-                name, (node_id, docname) in self.data["entities"][typ].items()]
+        for entity_type in self.data["entities"].keys():
+            entities += [(name, entity_type, node_id, docname)
+                for name, (node_id, docname) 
+                in self.data["entities"][entity_type].items()]
 
         return entities
     
     
-    def add_entity(self, name, typ, node_id, location):
+    def add_entity(self, name, entity_type, node_id, location):
         """Called by our directives to register a documented entity."""
         
-        if name in self.data["entities"][typ]:
-            other = self.data["entities"][typ][name]
+        if name in self.data["entities"][entity_type]:
+            other = self.data["entities"][entity_type][name]
             _logger.warning(
                 __("Duplicate description of %s %s. "
                     "Previously defined in: %s. "
                     "Use :noindex: for one of the descriptions."),
-                _entity_type_strings[typ], name, other[2], location=location)
+                _entity_type_labels[entity_type], name, other[2],
+                location=location)
         
-        self.data["entities"][typ][name] = (node_id, self.env.docname)
+        self.data["entities"][entity_type][name] = (node_id, self.env.docname)
     
     
     def get_full_qualified_name(self, node):
         return "cmake.{}.{}".format(node["cmake:type"], node["cmake:name"])
+    
+    
+    def resolve_xref(self, env, fromdocname, builder, typ, target, node,
+            contnode):
+        entity_type = self._xref_type_to_entity_type[typ]
+            
+        for name, (node_id, docname) in self.data["entities"][entity_type].items():
+            if name == target:
+                return make_refnode(builder, fromdocname, docname, node_id,
+                    contnode, " ".join([_entity_type_labels[entity_type], name]))
+        
+        return None
 
 
 def setup(app):
