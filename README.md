@@ -1,6 +1,6 @@
 # sphinx-cmake_domain
 
-A Sphinx extension that adds a CMake domain.
+A [Sphinx](https://www.sphinx-doc.org) extension that adds a [CMake](https://cmake.org) domain.
 
 
 ## Installation
