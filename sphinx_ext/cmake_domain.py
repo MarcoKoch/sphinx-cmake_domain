@@ -110,8 +110,9 @@ class CMakeVariableDescription(CmakeEntityDescription):
     """Directive describing a CMake variable."""
     
     doc_field_types = [
-        Field("type", label = _("Type")),
-        Field("default", label = _("Default value"))
+        Field("type", names = ("type",), label = _("Type"), has_arg = False),
+        Field("default", names = ("default",), label = _("Default value"),
+            has_arg = False)
     ]
     
     entity_type = "variable"
@@ -223,7 +224,7 @@ class CMakeDomain(Domain):
 
 
 def setup(app):
-    """This is called by Sphinx when loading the extension"""
+    """This function is called by Sphinx when loading the extension"""
     
     # Initialize localization
     package_dir = path.abspath(path.dirname(__file__))
