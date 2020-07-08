@@ -65,6 +65,8 @@ The following doc fields are supported:
   This function does the same, but supports much fancier arguments.
 ```
 
+Directives `cmake:macro` and `cmake:functions` are aliases for each other.
+
 The following options are supported:
 
 | Option      | Description                                            |
