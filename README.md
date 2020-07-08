@@ -112,7 +112,7 @@ All CMake entities can be referenced using the `:any:` role. In addition to that
 
 ### CMake index
 
-If the `html_domain_indices` config setting is enabled, a document called `cmake_index` is generated, which contains an index of all documented CMake entities. The document can be referenced using ``:ref:`cmake_index` ``.
+If the `html_domain_indices` config setting is enabled, an index of all documented CMake entities is generated in addition to the global index. The CMake index can be referenced using ``:ref:`cmake-index` ``.
 
 
 ## License
