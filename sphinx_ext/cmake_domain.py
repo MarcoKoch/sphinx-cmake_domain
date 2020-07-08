@@ -30,9 +30,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import re
+from collections import defaultdict
 from os import path
 
-from collections import defaultdict
+from docutils.parsers.rst import directives
 
 from sphinx.addnodes import desc_name, desc_signature
 from sphinx.directives import ObjectDescription
@@ -71,6 +72,11 @@ class CmakeEntityDescription(ObjectDescription):
     required_arguments = 1
     allow_nesting = False
     
+    option_spec = {
+        "noindex": directives.flag,
+        "noindexentry": directives.flag
+    }
+    
     
     def handle_signature(self, sig, signode):
         # By default, just use the signature as entity name.
@@ -90,16 +96,20 @@ class CmakeEntityDescription(ObjectDescription):
         signode["ids"].append(node_id)
         
         if "noindex" not in self.options:
+            add_to_index = not "noindexentry" in self.options
+        
             # Register the node at the domain, so it can be cross-referenced and
             # appears in the CMake index
-            domain.add_entity(sig, self.entity_type, node_id, signode)
+            domain.add_entity(sig, self.entity_type, node_id, signode,
+                add_to_index)
         
             # Add an entry in the global index
-            key = _get_index_sort_str(sig, self.env)[0].upper()
-            index_text = "{} ({})".format(
-                sig, domain.object_types[self.entity_type].lname)
-            self.indexnode["entries"].append(
-                ("single", index_text, node_id, "", key))
+            if add_to_index:
+                key = _get_index_sort_str(sig, self.env)[0].upper()
+                index_text = "{} ({})".format(
+                    sig, domain.object_types[self.entity_type].lname)
+                self.indexnode["entries"].append(
+                    ("single", index_text, node_id, "", key))
     
 
 class CMakeVariableDescription(CmakeEntityDescription):
@@ -123,17 +133,18 @@ class CMakeIndex(Index):
     
     
     def generate(self, docnames = None):
-        # Mapping name -> entry_data
+        # name -> [entity_type, node_id, docname]
         entries = defaultdict(list)
-        for name, entity_type, node_id, docname in self.domain.entities:
-            entries[name].append((entity_type, node_id, docname))
+        for name, entity_type, node_id, docname, add_to_index in self.domain.entities:
+            if add_to_index:
+                entries[name].append((entity_type, node_id, docname))
         
         # Sort by index name
         entries = sorted(entries.items(), key = lambda entry: 
                     _get_index_sort_str(entry[0], self.domain.env))
         
-        # Mapping key -> dispname, subtype, docname, anchor, extra, qualifier,
-        #   description
+        # key -> [dispname, subtype, docname, anchor, extra, qualifier,
+        #   description]
         content = defaultdict(list)
         for name, data in entries:
             key = _get_index_sort_str(name, self.domain.env)[0].upper()
@@ -175,9 +186,9 @@ class CMakeDomain(Domain):
     }
     initial_data = {
         "entities": {
-            "variable": defaultdict(list), # name -> [(node_id, docname)]
-            "function": defaultdict(list), # name -> [(node_id, docname)]
-            "module": defaultdict(list), # name -> [(node_id, docname)]
+            "variable": defaultdict(list), # name -> [(node_id, docname, add_to_index)]
+            "function": defaultdict(list), # name -> [(node_id, docname, add_to_index)]
+            "module": defaultdict(list), # name -> [(node_id, docname, add_to_index)]
         }
     }
     roles = {
@@ -203,8 +214,8 @@ class CMakeDomain(Domain):
         entities = []
         for entity_type in self.data["entities"].keys():
             for name, descriptions in self.data["entities"][entity_type].items():
-                entities += [(name, entity_type, node_id, docname)
-                    for node_id, docname in descriptions]
+                entities += [(name, entity_type, node_id, docname, add_to_index)
+                    for node_id, docname, add_to_index in descriptions]
 
         return entities
     
@@ -225,11 +236,11 @@ class CMakeDomain(Domain):
         return node_id
     
     
-    def add_entity(self, name, entity_type, node_id, location):
+    def add_entity(self, name, entity_type, node_id, location, add_to_index):
         """Called by our directives to register a documented entity."""
 
         self.data["entities"][entity_type][name].append(
-            (node_id, self.env.docname))
+            (node_id, self.env.docname, add_to_index))
     
     
     def get_full_qualified_name(self, node):
@@ -242,7 +253,7 @@ class CMakeDomain(Domain):
             
         for name, descriptions in self.data["entities"][entity_type].items():
             if name == target and len(descriptions[0]) != 0:
-                node_id, docname = descriptions[0]
+                node_id, docname, _ = descriptions[0]
                 label = " ".join([self.object_types[entity_type].lname, name])
                 return make_refnode(builder, fromdocname, docname, node_id,
                     contnode, label)

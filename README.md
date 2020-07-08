@@ -24,10 +24,10 @@ extensions = [
 
 ### Configuration
 
-| Setting                      | Default value  | Description                                                                             |
-|------------------------------|----------------|-----------------------------------------------------------------------------------------|
-| cmake_modules_show_extension | `False`        | Show the `.cmake` file extension after module names                                     |
-| cmake_index_common_prefix    | `[]`           | A list of prefixes that will be ignored when sorting CMake entities in the global index |
+| Setting                      | Default value  | Description                                                                     |
+|------------------------------|----------------|---------------------------------------------------------------------------------|
+| cmake_modules_show_extension | `False`        | Show the `.cmake` file extension after module names                             |
+| cmake_index_common_prefix    | `[]`           | A list of prefixes that will be ignored when sorting CMake entities in an index |
 
 
 ### Documenting variables
@@ -40,9 +40,10 @@ extensions = [
 
 The following options are supported:
 
-| Option      | Description                                      |
-|-------------|--------------------------------------------------|
-| `:noindex:` | Don't add this variable description to the index |
+| Option           | Description                                                                       |
+|------------------|-----------------------------------------------------------------------------------|
+| `:noindexentry:` | Don't add this variable description to the index                                  |
+| `:noindex:`      | Don't allow cross-referencing this variable description. Implies `:noindexentry:` |
 
 The following doc fields are supported:
 
@@ -69,9 +70,10 @@ Directives `cmake:macro` and `cmake:functions` are aliases for each other.
 
 The following options are supported:
 
-| Option      | Description                                            |
-|-------------|--------------------------------------------------------|
-| `:noindex:` | Don't add this macro/function description to the index |
+| Option           | Description                                                                             |
+|------------------|-----------------------------------------------------------------------------------------|
+| `:noindexentry:` | Don't add this macro/function description to the index                                  |
+| `:noindex:`      | Don't allow cross-referencing this macro/function description. Implies `:noindexentry:` |
 
 The following doc fields are supported:
 
@@ -96,9 +98,10 @@ The module name may optionally have a `.cmake` extension. Whether the extension 
 
 The following options are supported:
 
-| Option      | Description                                    |
-|-------------|------------------------------------------------|
-| `:noindex:` | Don't add this module description to the index |
+| Option           | Description                                                                     |
+|------------------|---------------------------------------------------------------------------------|
+| `:noindexentry:` | Don't add this module description to the index                                  |
+| `:noindex:`      | Don't allow cross-referencing this module description. Implies `:noindexentry:` |
 
 
 ### Referencing CMake entities
@@ -144,3 +147,4 @@ This extension is similar to the [sphinxcontrib-cmakedomain](https://github.com/
 This project is developed by Marco Koch <marco-koch@t-online.de>.
 
 Please note that I'm working on this extension in my spare time. It may thus take a while until I find the time to answer. If you don't hear back within two weeks, feel free to send me a reminder.
+
