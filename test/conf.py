@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath(os.pardir))
 
 # -- Project information -----------------------------------------------------
 
-project = 'test'
+project = 'Test'
 copyright = '2020, Marco Koch'
 author = 'Marco Koch'
 
