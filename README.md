@@ -55,7 +55,7 @@ The following doc fields are supported:
 ### Documenting macros/functions
 
 ```rst
-.. cmake:macro:: my_macro(<param1> <param2> ...)
+.. cmake:macro:: my_macro(<param1> <param2>)
 
   This macro does crazy things.
 
