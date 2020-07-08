@@ -123,19 +123,41 @@ class CMakeIndex(Index):
     
     
     def generate(self, docnames = None):
-        entries = ([(_get_index_sort_str(entity[0], self.domain.env), entity)
-            for entity in self.domain.entities])
-        entries = sorted(entries, key = lambda entry: entry[0])
+        # Mapping name -> entry_data
+        entries = defaultdict(list)
+        for name, entity_type, node_id, docname in self.domain.entities:
+            entries[name].append((entity_type, node_id, docname))
         
+        # Sort by index name
+        entries = sorted(entries.items(), key = lambda entry: 
+                    _get_index_sort_str(entry[0], self.domain.env))
+        
+        # Mapping key -> dispname, subtype, docname, anchor, extra, qualifier,
+        #   description
         content = defaultdict(list)
-        for sort_str, (name, entity_type, node_id, docname) in entries:
-            key = sort_str[0].upper()
-            
-            # dispname, subtype, docname, anchor, extra, qualifier, description
-            content[key].append((name, 0, docname, node_id, docname, "",
-                self.domain.object_types[entity_type].lname))
+        for name, data in entries:
+            key = _get_index_sort_str(name, self.domain.env)[0].upper()
+            if len(data) > 1:
+                # There are multiple entity descriptions with the same name.
+                # Create an 'empty' toplevel entry with a sub-entry for each
+                # entity description.
+                content[key].append((name, 1, "", "", "", "", ""))
+                
+                for entity_type, node_id, docname in data:
+                    type_str = self.domain.object_types[entity_type].lname
+                    content[key].append((name, 2, docname, node_id, type_str,
+                        "", ""))
+            else:
+                # There is only one entry with this name
+                entity_type, node_id, docname = data[0]
+                type_str = self.domain.object_types[entity_type].lname
+                content[key].append((name, 0, docname, node_id, type_str,
+                    "", ""))
         
-        return sorted(content.items()), True
+        # Sort by keys
+        content = sorted(content.items())
+        
+        return content, False
 
 
 class CMakeDomain(Domain):
