@@ -122,7 +122,7 @@ If the `html_domain_indices` config setting is enabled, an index of all document
 This extension is provided as open-source software under the 3-Clause BSD license. See file [LICENSE](LICENSE) for further information.
 
 
-## Bugs, Feedback & Support
+## Bugs, feedback & support
 
 Reports and requests are welcome at <https://github.com/marcokoch/sphinx-cmake_domain/issues>.
 Please use the search function before you post to avoid duplicate issues.
