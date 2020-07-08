@@ -73,9 +73,11 @@ The following options are supported:
 
 The following doc fields are supported:
 
-| Field       | Description                                                                |
-|-------------|----------------------------------------------------------------------------|
-| `:param:`   | Documents a parameter. For example: `:param <param1>:` , `:param SOURCES:` |
+| Field                 | Description                                                                |
+|-----------------------|----------------------------------------------------------------------------|
+| `:param:`<sup>1</sup> | Documents a parameter. For example: `:param <param1>:` , `:param SOURCES:` |
+
+<sup>1</sup> Aliases are: `:parameter:`, `:arg:`, `:argument:`, `:keyword:` and `:option:`
 
 
 ### Documenting modules
@@ -98,12 +100,12 @@ The following options are supported:
 
 All CMake entities can be referenced using the `:any:` role. In addition to that, the following roles are supported:
 
-| Role             | Description                |
-|------------------|----------------------------|
-| `:cmake:var:`    | Links to a variable        |
-| `:cmake:func:`   | Links to a macro/function  |
-| `:cmake:macro:`  | Synonym for `:cmake:func:` |
-| `:cmake:module:` | Links to a module          |
+| Role             | Description               |
+|------------------|---------------------------|
+| `:cmake:var:`    | Links to a variable       |
+| `:cmake:func:`   | Links to a macro/function |
+| `:cmake:macro:`  | Alias for `:cmake:func:`  |
+| `:cmake:module:` | Links to a module         |
 
 
 ### CMake index
