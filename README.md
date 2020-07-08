@@ -24,7 +24,7 @@ extensions = [
 
 ### Configuration
 
-| Setting                      |  Default value | Description                                                                             |
+| Setting                      | Default value  | Description                                                                             |
 |------------------------------|----------------|-----------------------------------------------------------------------------------------|
 | cmake_modules_show_extension | `False`        | Show the `.cmake` file extension after module names                                     |
 | cmake_index_common_prefix    | `[]`           | A list of prefixes that will be ignored when sorting CMake entities in the global index |
@@ -99,6 +99,7 @@ The following options are supported:
 | Option      | Description                                    |
 |-------------|------------------------------------------------|
 | `:noindex:` | Don't add this module description to the index |
+
 
 ### Referencing CMake entities
 
