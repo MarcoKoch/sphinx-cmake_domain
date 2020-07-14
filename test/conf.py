@@ -57,4 +57,4 @@ html_show_sourcelink = False
 
 # -- Options for sphinx_ext.cmake_domain -------------------------------------
 
-cmake_index_common_prefix = ["MY_"]
+cmake_index_common_prefix = ["MY_", "my_"]

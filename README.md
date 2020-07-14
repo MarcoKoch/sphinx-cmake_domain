@@ -24,10 +24,17 @@ extensions = [
 
 ### Configuration
 
-| Setting                      | Default value  | Description                                                                     |
-|------------------------------|----------------|---------------------------------------------------------------------------------|
-| cmake_modules_show_extension | `False`        | Show the `.cmake` file extension after module names                             |
-| cmake_index_common_prefix    | `[]`           | A list of prefixes that will be ignored when sorting CMake entities in an index |
+*sphinx-cmake_domain* adds the following config settings:
+
+| Setting                      | Default value | Description                                                                     |
+|------------------------------|---------------|---------------------------------------------------------------------------------|
+| cmake_modules_show_extension | `False`       | Show the `.cmake` file extension after module names                             |
+| cmake_index_common_prefix    | `[]`          | A list of prefixes that will be ignored when sorting CMake entities in an index |
+
+Additionally, the following standard settings are supported:
+
+* [add_function_parentheses](https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-add_function_parentheses)
+* [html_domain_indices](https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_domain_indices)
 
 
 ### Documenting variables
@@ -83,7 +90,7 @@ The following doc fields are supported:
 
 <sup>1</sup> Aliases are: `:parameter:`, `:arg:`, `:argument:`, `:keyword:` and `:option:`
 
-Documented parameters can be referenced from within a macro/function description using the `:cmake:param:` role.
+Documented parameters can be referenced from within a macro/function description using the `:cmake:param:` role. For `<param>` style parameters, their name without the brackets must be used (e.g. ``:cmake:param:`param` ``).
 
 
 ### Documenting modules
@@ -115,6 +122,8 @@ All CMake entities can be referenced using the `:any:` role. In addition to that
 | `:cmake:macro:`  | Alias for `:cmake:func:`  |
 | `:cmake:module:` | Links to a module         |
 
+The target name for `:cmake:func:` and `:cmake:macro:` may be specified with or without trailing parentheses. Whether paraentheses are displayed solely depends on the value of the `add_function_parentheses` config setting.
+
 
 ### CMake index
 
@@ -144,7 +153,7 @@ This extension is similar to the [sphinxcontrib-cmakedomain](https://github.com/
 
 ## Contact
 
-This project is developed by Marco Koch <marco-koch@t-online.de>.
+This software is developed by Marco Koch <marco-koch@t-online.de>.
 
 Please note that I'm working on this extension in my spare time. It may thus take a while until I find the time to answer. If you don't hear back within two weeks, feel free to send me a reminder.
 

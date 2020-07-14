@@ -35,12 +35,14 @@ from os import path
 
 from docutils.parsers.rst import directives
 
-from sphinx.addnodes import desc_name, desc_signature
+from sphinx.addnodes import desc_annotation, desc_name, desc_optional, \
+    desc_parameter, desc_parameterlist, desc_signature
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Domain, Index, ObjType
 from sphinx.locale import _, __
 from sphinx.roles import XRefRole
-from sphinx.util.docfields import Field
+from sphinx.util.docfields import Field, GroupedField
+from sphinx.util.logging import getLogger
 from sphinx.util.nodes import make_id, make_refnode
 
 
@@ -48,6 +50,9 @@ __version__ = "0.1.0.dev1"
 __author__ = "Marco Koch"
 __copyright__ = "Copyright 2020, Marco Koch"
 __license__ = "BSD 3-Clause"
+
+
+_logger = getLogger(__name__)
 
 
 def _get_index_sort_str(name, env):
@@ -62,10 +67,9 @@ def _get_index_sort_str(name, env):
             return name[len(prefix):]
     
     return name
-    
 
 
-class CmakeEntityDescription(ObjectDescription):
+class CMakeEntityDescription(ObjectDescription):
     """Base class for directives documenting CMake entities"""
     
     has_content = True
@@ -78,20 +82,24 @@ class CmakeEntityDescription(ObjectDescription):
     }
     
     
-    def handle_signature(self, sig, signode):
-        # By default, just use the signature as entity name.
+    def set_signode_attributes(self, signode, name):
+        signode["cmake:name"] = name
+        signode["cmake:type"] = self.entity_type
+    
+    
+    def handle_signature(self, sig, signode):    
+        # By default, just use the complete signature as entity name.
         # Subclasses for entities with more complex signatures (e.g. functions)
         # should override this implementation.
         signode += desc_name(text = sig)
-        signode["cmake:name"] = sig
-        signode["cmake:type"] = self.entity_type
+        self.set_signode_attributes(signode, sig)
         
         return sig
     
     
-    def add_target_and_index(self, name_cls, sig, signode):
+    def add_target_and_index(self, name, sig, signode):
         domain = self.env.get_domain("cmake")
-        node_id = domain.make_entity_node_id(sig, self.entity_type,
+        node_id = domain.make_entity_node_id(name, self.entity_type,
             self.state.document)
         signode["ids"].append(node_id)
         
@@ -100,28 +108,214 @@ class CmakeEntityDescription(ObjectDescription):
         
             # Register the node at the domain, so it can be cross-referenced and
             # appears in the CMake index
-            domain.add_entity(sig, self.entity_type, node_id, signode,
+            domain.add_entity(name, self.entity_type, node_id, signode,
                 add_to_index)
         
             # Add an entry in the global index
             if add_to_index:
-                key = _get_index_sort_str(sig, self.env)[0].upper()
+                key = _get_index_sort_str(name, self.env)[0].upper()
                 index_text = "{} ({})".format(
-                    sig, domain.object_types[self.entity_type].lname)
+                    name, domain.object_types[self.entity_type].lname)
                 self.indexnode["entries"].append(
                     ("single", index_text, node_id, "", key))
     
 
-class CMakeVariableDescription(CmakeEntityDescription):
+class CMakeVariableDescription(CMakeEntityDescription):
     """Directive describing a CMake variable."""
     
     doc_field_types = [
-        Field("type", names = ("type",), label = _("Type"), has_arg = False),
+        Field("type", names = ["type",], label = _("Type"), has_arg = False),
         Field("default", names = ("default",), label = _("Default value"),
             has_arg = False)
     ]
     
     entity_type = "variable"
+
+
+class CMakeFunctionDescription(CMakeEntityDescription):
+    """Directive describing a CMake macro/function"""
+    
+    doc_field_types = [
+        GroupedField("parameter",
+            names =["param", "parameter", "arg", "argument", "keyword",
+                "option"],
+            label = _("Parameters"), rolename = "param")
+    ]
+    
+    entity_type = "function"
+    
+    
+    # Regexes used to parse macro/function definitions
+    _base_regex = re.compile(
+        r"(?P<name>\w+)\s*(?:\(\s*(?P<paramlist>[^)]*)\s*\))?")
+    _param_regex = re.compile(
+        "(?:<(?P<argument>\w+)>)|"
+        "(?P<keyword>\w+)|"
+        "(?P<elipsis>\.\.\.)")
+    _non_whitespace_regex = re.compile(r"[^\s]")
+        
+    
+    class _ParameterParseError(Exception):
+        """
+        Exception thrown by _parse_parameter_list() if the given signature
+        string is invalid.
+        """
+        
+        @property
+        def signature(self):
+            return self._params_sig
+        
+        
+        @property
+        def message(self):
+            return self._msg
+        
+        
+        def __init__(self, params_sig, msg = None):
+            super().__init__(__("Bad macro/function parameter signature"))
+            self._params_sig = params_sig
+            self._msg = msg
+    
+    
+    @classmethod
+    def _parse_parameter_list(cls, params_sig):
+        """
+        Parses macro/function parameters from the relevant part of a
+        macro/function signature.
+        
+        Returns a list of dictionaries with the following entries:
+        
+        * {type, name}      # for type == argument and type == keyword
+        * {type}            # for type == elipsis
+        * {type, subparams} # for type == optional_paramlist
+        """
+        
+        # TODO: Handle multiple choice parameters like (A|B)
+        
+        parsed_params = []
+        pos = 0
+        sig_len = len(params_sig)
+        while pos < sig_len:
+            # Ignore whitespace between parameters
+            non_whitespace_match = cls._non_whitespace_regex.search(
+                params_sig, pos)
+            if non_whitespace_match is None:
+                break
+            pos = non_whitespace_match.start()
+            
+            # Check if the next parameter is optional (i.e. enclosed in [])
+            if params_sig[pos] == '[':
+                # If so, find the matching closing ]
+                start_pos = pos
+                open_bracket_cnt = 1
+                pos += 1
+                while open_bracket_cnt > 0:
+                    if pos >= sig_len:
+                        raise cls._ParameterParseError(params_sig,
+                            __("No matching closing bracket for optional "
+                                "parameter list starting at column %i") %
+                                    start_pos)
+                
+                    if params_sig[pos] == '[':
+                        open_bracket_cnt += 1
+                    elif params_sig[pos] == ']':
+                        open_bracket_cnt -= 1
+                        
+                    pos += 1
+                
+                parsed_params.append({
+                    "type": "optional_paramlist",
+                    "subparams": cls._parse_parameter_list(
+                        params_sig[start_pos + 1 : pos - 1])
+                })
+                continue
+                    
+            # All other types of parameters can be parsed using a regular
+            # expression
+            match = cls._param_regex.match(params_sig, pos)
+            if match is None:
+                raise cls._ParameterParseError(params_sig)
+            
+            matched_groups = match.groupdict()
+            if matched_groups["argument"] is not None:
+                parsed_params.append({
+                    "type": "argument",
+                    "name": match["argument"]
+                })
+            elif matched_groups["keyword"] is not None:
+                parsed_params.append({
+                    "type": "keyword",
+                    "name": match["keyword"]
+                })
+            elif matched_groups["elipsis"] is not None:
+                parsed_params.append({"type": "elipsis"})
+            elif matched_groups["optional_paramlist"] is not None:
+                parsed_params.append({
+                    "type": "optional_paramlist",
+                    "subparams": cls._parse_parameter_list(
+                        match["optional_paramlist"])
+                })
+                
+            pos = match.end()
+        
+        return parsed_params
+    
+    
+    @classmethod
+    def _add_param_nodes(cls, root_node, parsed_params):
+        """
+        Adds doctree nodes for the given parsed parameters (as returned by
+        _parse_parameter_list()) as children to a given root node.
+        """
+       
+        for param in parsed_params:
+            if param["type"] == "argument":
+                root_node += desc_parameter(
+                    text = "<{}>".format(param["name"]))
+            elif param["type"] == "keyword":
+                root_node += desc_parameter(text = param["name"])
+            elif param["type"] == "elipsis":
+                root_node += desc_annotation(text = "...")
+            elif param["type"] == "optional_paramlist":            
+                optional_node = desc_optional()
+                cls._add_param_nodes(optional_node, param["subparams"])
+                root_node += optional_node
+    
+    
+    def handle_signature(self, sig, signode):
+        base_match = self._base_regex.fullmatch(sig)
+        if base_match is None:
+            _logger.error(__("Invalid macro/function signature: %s"),
+                sig, location = signode)
+            signode += desc_name(text = sig)
+            return sig
+        
+        name = base_match["name"]
+        params = base_match["paramlist"]
+        
+        self.set_signode_attributes(signode, name)
+        
+        paramlist_node = desc_parameterlist() 
+        paramlist_node.child_text_separator = " "     
+        if params is not None:
+            try:
+                parsed_params = self._parse_parameter_list(params)
+            except self._ParameterParseError as ex:
+                errmsg = (__("Invalid argument list for macro/function %s: %s") %
+                    (name, ex.signature))
+                if ex.message:
+                    errmsg += "\n" + ex.message;
+                _logger.error(errmsg, location = signode)
+
+                signode += desc_name(text = sig)
+                return name
+
+            self._add_param_nodes(paramlist_node, parsed_params)
+        
+        signode += desc_name(text = name)
+        signode += paramlist_node
+        
+        return name
 
 
 class CMakeIndex(Index):
@@ -177,8 +371,12 @@ class CMakeDomain(Domain):
     name = "cmake"
     label = _("CMake")
     data_version = 0
-    directives = {"var": CMakeVariableDescription}
     indices = [CMakeIndex]
+    directives = {
+        "var": CMakeVariableDescription,
+        "macro": CMakeFunctionDescription,
+        "function": CMakeFunctionDescription
+    }
     object_types = {
         "variable": ObjType(_("CMake variable"), "var"),
         "function": ObjType(_("CMake macro/function"), "macro", "function"),
@@ -195,7 +393,8 @@ class CMakeDomain(Domain):
         "var": XRefRole(),
         "func": XRefRole(),
         "macro": XRefRole(),
-        "module": XRefRole()
+        "module": XRefRole(),
+        "param": XRefRole()
     }
     
     
@@ -249,6 +448,15 @@ class CMakeDomain(Domain):
     
     def resolve_xref(self, env, fromdocname, builder, typ, target, node,
             contnode):
+        # :cmake:param: roles do not refer to entities but to macro/function
+        # parameters. We thus need some special treatment here.
+        if typ == "param":
+            # TODO
+            return
+        
+        # For all other roles, we simply look up the target object in the
+        # list of registered entity descriptions for the respective entity type
+        # of the given role.
         entity_type = self._xref_type_to_entity_type[typ]
             
         for name, descriptions in self.data["entities"][entity_type].items():
@@ -281,4 +489,3 @@ def setup(app):
         "parallel_read_safe": True,
         "parallel_write_safe": True
     }
-
