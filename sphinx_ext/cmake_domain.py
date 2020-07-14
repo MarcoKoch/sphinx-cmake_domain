@@ -391,8 +391,8 @@ class CMakeDomain(Domain):
     }
     roles = {
         "var": XRefRole(),
-        "func": XRefRole(),
-        "macro": XRefRole(),
+        "func": XRefRole(fix_parens = True),
+        "macro": XRefRole(fix_parens = True),
         "module": XRefRole(),
         "param": XRefRole()
     }
@@ -410,6 +410,7 @@ class CMakeDomain(Domain):
     
     @property
     def entities(self):
+        # [(name, entity_type, node_id, docname, add_to_index)]
         entities = []
         for entity_type in self.data["entities"].keys():
             for name, descriptions in self.data["entities"][entity_type].items():
@@ -435,7 +436,7 @@ class CMakeDomain(Domain):
     def make_entity_node_id(self, name, entity_type, document):
         """Generates a node ID for an entity description"""
         
-        node_id = make_id(self.env, document, "cmake",
+        node_id = make_id(self.env, document, self.name,
             "-".join([entity_type, name]))
         
         # If there is already an other description for the same entity in the
@@ -456,7 +457,26 @@ class CMakeDomain(Domain):
     
     
     def get_full_qualified_name(self, node):
-        return "cmake.{}.{}".format(node["cmake:type"], node["cmake:name"])
+        return ".".join(self.name, node["cmake:type"], node["cmake:name"])
+    
+    
+    def _make_refnode(self, env, name, entity_type, node_id, docname, builder,
+            fromdocname, contnode):      
+        """
+        Helper function for generating reference nodes linking to entity
+        descriptions.
+        """
+        
+        # If add_function_parentheses is true, we display macro/function
+        # names with empty parentheses
+        display_name = name
+        if (entity_type == "function" and
+                env.app.config.add_function_parentheses):
+            display_name += "()"
+        
+        title = "{}: {}".format(self.object_types[entity_type].lname, name)     
+        return make_refnode(builder, fromdocname, docname, node_id, contnode,
+            title)
     
     
     def resolve_xref(self, env, fromdocname, builder, typ, target, node,
@@ -472,26 +492,37 @@ class CMakeDomain(Domain):
         # of the given role.
         entity_type = self._xref_type_to_entity_type[typ]
         
-        # Macro/functions may be specified with or without parentheses
-        if typ == "function" and target.endswith("()"):
-            target = target[:2]
-            
         for name, descriptions in self.data["entities"][entity_type].items():
-            if name == target and len(descriptions[0]) != 0:                
-                # If add_function_parentheses is true, we display macro/function
-                # names with empty parentheses
-                display_name = target
-                if env.app.config.add_function_parentheses:
-                    display_name += "()"
-                
+            if name == target and len(descriptions[0]) != 0:
                 node_id, docname, _ = descriptions[0]
-                title = "{}: {}".format(self.object_types[entity_type].lname,
-                    display_name)
-                                
-                return make_refnode(builder, fromdocname, docname, node_id,
-                    contnode, title)
+                return self._make_refnode(env, name, entity_type, node_id,
+                    docname, builder, fromdocname, contnode)
         
         return None
+    
+    
+    def resolve_any_xref(self, env, fromdocname, builder, target, node,
+            contnode):
+            
+        # Macro/functions may be specified with or without parentheses
+        if target.endswith("()"):
+            target = target[:-2]
+            resolved = self.resolve_xref(env, fromdocname, builder, "func",
+                target, node, contnode)
+            return ([(self.name + ":func", resolved)] if resolved is not None 
+                else [])
+        
+        # If we can't determine the entity type from the target string,
+        # try all entity types
+        resolved_nodes = []
+        for entity_type, obj_type in self.object_types.items():
+            role = obj_type.roles[0]
+            resolved = self.resolve_xref(env, fromdocname, builder, role,
+                target, node, contnode)
+            if resolved is not None:
+                resolved_nodes.append((":".join([self.name, role]), resolved))
+        
+        return resolved_nodes
 
 
 def setup(app):

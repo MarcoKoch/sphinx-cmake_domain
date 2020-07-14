@@ -38,6 +38,11 @@ extensions = [
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+# A boolean that decides whether parentheses are appended to function and method
+# role text (e.g. the content of :func:`input`) to signify that the name is
+# callable. Default is True.
+add_function_parentheses = True
+
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -53,6 +58,8 @@ html_copy_source = False
 # If true (and html_copy_source is true as well), links to the reST sources will
 # be added to the sidebar. The default is True.
 html_show_sourcelink = False
+
+
 
 
 # -- Options for sphinx_ext.cmake_domain -------------------------------------

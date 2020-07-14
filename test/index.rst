@@ -67,12 +67,12 @@ Documenting macros/functions
     This function has no documented arguments.
 
 
-.. cmake::function::empty_arglist_func()
+.. cmake:function:: empty_arglist_func()
 
     This function has an empty argument list.
 
 
-.. cmake::function:: not_indexed()
+.. cmake:function:: not_indexed()
     :noindex:
 
     This function should not appear in any index.
