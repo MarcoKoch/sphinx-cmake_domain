@@ -419,6 +419,19 @@ class CMakeDomain(Domain):
         return entities
     
     
+    def get_objects(self):
+        #name, dispname, type, docname, anchor, priority
+        objects = []
+        for entity_type in self.data["entities"].keys():
+            for name, descriptions in self.data["entities"][entity_type].items():
+                objects += [
+                    ("cmake.{}.{}".format(entity_type, name), name, entity_type,
+                        docname, node_id, 1)
+                    for node_id, docname, _ in descriptions]
+        
+        return objects
+    
+    
     def make_entity_node_id(self, name, entity_type, document):
         """Generates a node ID for an entity description"""
         
@@ -458,13 +471,25 @@ class CMakeDomain(Domain):
         # list of registered entity descriptions for the respective entity type
         # of the given role.
         entity_type = self._xref_type_to_entity_type[typ]
+        
+        # Macro/functions may be specified with or without parentheses
+        if typ == "function" and target.endswith("()"):
+            target = target[:2]
             
         for name, descriptions in self.data["entities"][entity_type].items():
-            if name == target and len(descriptions[0]) != 0:
+            if name == target and len(descriptions[0]) != 0:                
+                # If add_function_parentheses is true, we display macro/function
+                # names with empty parentheses
+                display_name = target
+                if env.app.config.add_function_parentheses:
+                    display_name += "()"
+                
                 node_id, docname, _ = descriptions[0]
-                label = " ".join([self.object_types[entity_type].lname, name])
+                title = "{}: {}".format(self.object_types[entity_type].lname,
+                    display_name)
+                                
                 return make_refnode(builder, fromdocname, docname, node_id,
-                    contnode, label)
+                    contnode, title)
         
         return None
 
