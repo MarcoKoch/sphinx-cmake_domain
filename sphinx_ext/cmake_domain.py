@@ -140,7 +140,7 @@ class CMakeFunctionDescription(CMakeObjectDescription):
         GroupedField("parameter",
             names =["param", "parameter", "arg", "argument", "keyword",
                 "option"],
-            label = _("Parameters"), rolename = "param")
+            label = _("Parameters"))
     ]
     
     object_type = "function"
@@ -390,8 +390,7 @@ class CMakeDomain(Domain):
         "var": XRefRole(),
         "func": XRefRole(fix_parens = True),
         "macro": XRefRole(fix_parens = True),
-        "module": XRefRole(),
-        "param": XRefRole()
+        "module": XRefRole()
     }
     
     
@@ -476,17 +475,8 @@ class CMakeDomain(Domain):
     
     def resolve_xref(self, env, fromdocname, builder, typ, target, node,
             contnode):
-        # :cmake:param: roles do not refer to entities but to macro/function
-        # parameters. We thus need some special treatment here.
-        if typ == "param":
-            # TODO
-            return None
-        
-        # For all other roles, we simply look up the target object in the
-        # list of registered entity descriptions for the respective entity type
-        # of the given role.
-        typ = self._xref_type_to_entity_type[typ]
-        
+        typ = self._xref_type_to_entity_type[typ]      
+         
         for name, (node_id, docname, _) in self.data[typ].items():
             if name == target:
                 return self._make_refnode(env, name, typ, node_id, docname,
