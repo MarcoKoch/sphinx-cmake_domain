@@ -55,22 +55,22 @@ __license__ = "BSD 3-Clause"
 _logger = getLogger(__name__)
 
 
-def _get_index_sort_str(name, env):
+def _get_index_sort_str(env, name):
     """
-    Returns a string by which an entity with the given name shall be sorted in
+    Returns a string by which an object with the given name shall be sorted in
     indices.
     """
     
     ignored_prefixes = env.config.cmake_index_common_prefix
     for prefix in ignored_prefixes:
-        if name.startswith(prefix):
+        if name.startswith(prefix) and name != prefix:
             return name[len(prefix):]
     
     return name
 
 
-class CMakeEntityDescription(ObjectDescription):
-    """Base class for directives documenting CMake entities"""
+class CMakeObjectDescription(ObjectDescription):
+    """Base class for directives documenting CMake objects"""
     
     has_content = True
     required_arguments = 1
@@ -82,45 +82,44 @@ class CMakeEntityDescription(ObjectDescription):
     }
     
     
-    def set_signode_attributes(self, signode, name):
-        signode["cmake:name"] = name
-        signode["cmake:type"] = self.entity_type
+    @property
+    def object_type(self):
+        raise NotImplementedError()
     
     
     def handle_signature(self, sig, signode):    
-        # By default, just use the complete signature as entity name.
-        # Subclasses for entities with more complex signatures (e.g. functions)
+        # By default, just use the complete signature as object name.
+        # Subclasses for objects with more complex signatures (e.g. functions)
         # should override this implementation.
         signode += desc_name(text = sig)
-        self.set_signode_attributes(signode, sig)
         
         return sig
     
     
     def add_target_and_index(self, name, sig, signode):
         domain = self.env.get_domain("cmake")
-        node_id = domain.make_entity_node_id(name, self.entity_type,
-            self.state.document)
-        signode["ids"].append(node_id)
         
-        if "noindex" not in self.options:
-            add_to_index = not "noindexentry" in self.options
-        
-            # Register the node at the domain, so it can be cross-referenced and
-            # appears in the CMake index
-            domain.add_entity(name, self.entity_type, node_id, signode,
-                add_to_index)
-        
-            # Add an entry in the global index
-            if add_to_index:
-                key = _get_index_sort_str(name, self.env)[0].upper()
-                index_text = "{} ({})".format(
-                    name, domain.object_types[self.entity_type].lname)
-                self.indexnode["entries"].append(
-                    ("single", index_text, node_id, "", key))
+        # Set the node ID that is used for referencing the node
+        node_id = make_id(self.env, self.state.document, "", name)
+        signode["ids"].append(node_id)        
+        self.state.document.note_explicit_target(signode)
+              
+        # Register the node at the domain, so it can be cross-referenced and
+        # appears in the CMake index
+        add_to_index = "noindexentry" not in self.options
+        domain.register_object(name, self.object_type, node_id, add_to_index,
+            signode)
+    
+        # Add an entry in the global index
+        if add_to_index:
+            type_str = domain.get_type_name(
+                domain.object_types[self.object_type])
+            index_text = "{} ({})".format(name, type_str)
+            self.indexnode["entries"].append(
+                ("single", index_text, node_id, "", None))
     
 
-class CMakeVariableDescription(CMakeEntityDescription):
+class CMakeVariableDescription(CMakeObjectDescription):
     """Directive describing a CMake variable."""
     
     doc_field_types = [
@@ -129,10 +128,12 @@ class CMakeVariableDescription(CMakeEntityDescription):
             has_arg = False)
     ]
     
-    entity_type = "variable"
+    object_type = "variable"
+    
+    # TODO: Support values
 
 
-class CMakeFunctionDescription(CMakeEntityDescription):
+class CMakeFunctionDescription(CMakeObjectDescription):
     """Directive describing a CMake macro/function"""
     
     doc_field_types = [
@@ -142,7 +143,7 @@ class CMakeFunctionDescription(CMakeEntityDescription):
             label = _("Parameters"), rolename = "param")
     ]
     
-    entity_type = "function"
+    object_type = "function"
     
     
     # Regexes used to parse macro/function definitions
@@ -180,19 +181,17 @@ class CMakeFunctionDescription(CMakeEntityDescription):
     @classmethod
     def _parse_parameter_list(cls, params_sig):
         """
-        Parses macro/function parameters from the relevant part of a
-        macro/function signature.
+        Parses macro/function parameters from a signature string.
         
-        Returns a list of dictionaries with the following entries:
+        Returns an AST as list of dictionaries with the following entries:
         
-        * {type, name}      # for type == argument and type == keyword
-        * {type}            # for type == elipsis
-        * {type, subparams} # for type == optional_paramlist
+        * {type, name}      # for type == "argument" or type == "keyword"
+        * {type}            # for type == "elipsis"
+        * {type, subparams} # for type == "optional_paramlist"
         """
         
         # TODO: Handle multiple choice parameters like (A|B)
         
-        parsed_params = []
         pos = 0
         sig_len = len(params_sig)
         while pos < sig_len:
@@ -223,11 +222,11 @@ class CMakeFunctionDescription(CMakeEntityDescription):
                         
                     pos += 1
                 
-                parsed_params.append({
+                yield {
                     "type": "optional_paramlist",
                     "subparams": cls._parse_parameter_list(
                         params_sig[start_pos + 1 : pos - 1])
-                })
+                }
                 continue
                     
             # All other types of parameters can be parsed using a regular
@@ -238,37 +237,35 @@ class CMakeFunctionDescription(CMakeEntityDescription):
             
             matched_groups = match.groupdict()
             if matched_groups["argument"] is not None:
-                parsed_params.append({
+                yield {
                     "type": "argument",
                     "name": match["argument"]
-                })
+                }
             elif matched_groups["keyword"] is not None:
-                parsed_params.append({
+                yield {
                     "type": "keyword",
                     "name": match["keyword"]
-                })
+                }
             elif matched_groups["elipsis"] is not None:
-                parsed_params.append({"type": "elipsis"})
+                yield {"type": "elipsis"}
             elif matched_groups["optional_paramlist"] is not None:
-                parsed_params.append({
+                yield {
                     "type": "optional_paramlist",
                     "subparams": cls._parse_parameter_list(
                         match["optional_paramlist"])
-                })
+                }
                 
             pos = match.end()
-        
-        return parsed_params
     
     
     @classmethod
-    def _add_param_nodes(cls, root_node, parsed_params):
+    def _add_param_nodes(cls, root_node, ast):
         """
         Adds doctree nodes for the given parsed parameters (as returned by
         _parse_parameter_list()) as children to a given root node.
         """
        
-        for param in parsed_params:
+        for param in ast:
             if param["type"] == "argument":
                 root_node += desc_parameter(
                     text = "<{}>".format(param["name"]))
@@ -293,13 +290,11 @@ class CMakeFunctionDescription(CMakeEntityDescription):
         name = base_match["name"]
         params = base_match["paramlist"]
         
-        self.set_signode_attributes(signode, name)
-        
         paramlist_node = desc_parameterlist() 
         paramlist_node.child_text_separator = " "     
         if params is not None:
             try:
-                parsed_params = self._parse_parameter_list(params)
+                param_ast = self._parse_parameter_list(params)
             except self._ParameterParseError as ex:
                 errmsg = (__("Invalid argument list for macro/function %s: %s") %
                     (name, ex.signature))
@@ -310,7 +305,7 @@ class CMakeFunctionDescription(CMakeEntityDescription):
                 signode += desc_name(text = sig)
                 return name
 
-            self._add_param_nodes(paramlist_node, parsed_params)
+            self._add_param_nodes(paramlist_node, param_ast)
         
         signode += desc_name(text = name)
         signode += paramlist_node
@@ -327,36 +322,40 @@ class CMakeIndex(Index):
     
     
     def generate(self, docnames = None):
-        # name -> [entity_type, node_id, docname]
+        # name -> [typ, node_id, docname]
         entries = defaultdict(list)
-        for name, entity_type, node_id, docname, add_to_index in self.domain.entities:
+        for name, typ, node_id, docname, add_to_index in self.domain.objects:
             if add_to_index:
-                entries[name].append((entity_type, node_id, docname))
+                entries[name].append((typ, node_id, docname))
         
         # Sort by index name
-        entries = sorted(entries.items(), key = lambda entry: 
-                    _get_index_sort_str(entry[0], self.domain.env))
+        entries = sorted(entries.items(),
+            key = lambda entry: _get_index_sort_str(self.domain.env, entry[0]))
         
         # key -> [dispname, subtype, docname, anchor, extra, qualifier,
         #   description]
         content = defaultdict(list)
         for name, data in entries:
-            key = _get_index_sort_str(name, self.domain.env)[0].upper()
+            key = _get_index_sort_str(self.domain.env, name)[0].upper()
             if len(data) > 1:
                 # There are multiple entity descriptions with the same name.
                 # Create an 'empty' toplevel entry with a sub-entry for each
                 # entity description.
                 content[key].append((name, 1, "", "", "", "", ""))
                 
-                for entity_type, node_id, docname in data:
-                    type_str = self.domain.object_types[entity_type].lname
-                    content[key].append((name, 2, docname, node_id, type_str,
-                        "", ""))
+                for typ, node_id, docname in data:
+                    dispname = self.domain.make_object_display_name(name, typ)             
+                    type_str = self.domain.get_type_name(
+                        self.domain.object_types[typ])
+                    content[key].append((dispname, 2, docname, node_id,
+                        type_str, "", ""))
             else:
                 # There is only one entry with this name
-                entity_type, node_id, docname = data[0]
-                type_str = self.domain.object_types[entity_type].lname
-                content[key].append((name, 0, docname, node_id, type_str,
+                typ, node_id, docname = data[0]
+                dispname = self.domain.make_object_display_name(name, typ)
+                type_str = self.domain.get_type_name(
+                    self.domain.object_types[typ])
+                content[key].append((dispname, 0, docname, node_id, type_str,
                     "", ""))
         
         # Sort by keys
@@ -378,16 +377,14 @@ class CMakeDomain(Domain):
         "function": CMakeFunctionDescription
     }
     object_types = {
-        "variable": ObjType(_("CMake variable"), "var"),
-        "function": ObjType(_("CMake macro/function"), "macro", "function"),
-        "module": ObjType(_("CMake module"), "module")
+        "variable": ObjType(_("variable"), "var"),
+        "function": ObjType(_("macro/function"), "macro", "function"),
+        "module": ObjType(_("module"), "module")
     }
     initial_data = {
-        "entities": {
-            "variable": defaultdict(list), # name -> [(node_id, docname, add_to_index)]
-            "function": defaultdict(list), # name -> [(node_id, docname, add_to_index)]
-            "module": defaultdict(list), # name -> [(node_id, docname, add_to_index)]
-        }
+        "variable": {}, # name -> (node_id, docname, add_to_index)
+        "function": {}, # name -> (node_id, docname, add_to_index)
+        "module": {}, # name -> (node_id, docname, add_to_index)
     }
     roles = {
         "var": XRefRole(),
@@ -409,72 +406,70 @@ class CMakeDomain(Domain):
     
     
     @property
-    def entities(self):
-        # [(name, entity_type, node_id, docname, add_to_index)]
-        entities = []
-        for entity_type in self.data["entities"].keys():
-            for name, descriptions in self.data["entities"][entity_type].items():
-                entities += [(name, entity_type, node_id, docname, add_to_index)
-                    for node_id, docname, add_to_index in descriptions]
-
-        return entities
+    def objects(self):
+        for typ in self.object_types.keys():
+            for name, (node_id, docname, add_to_index) in self.data[typ].items():
+                yield (name, typ, node_id, docname, add_to_index)
     
     
-    def get_objects(self):
-        #name, dispname, type, docname, anchor, priority
-        objects = []
-        for entity_type in self.data["entities"].keys():
-            for name, descriptions in self.data["entities"][entity_type].items():
-                objects += [
-                    ("cmake.{}.{}".format(entity_type, name), name, entity_type,
-                        docname, node_id, 1)
-                    for node_id, docname, _ in descriptions]
+    def get_objects(self):    
+        #fullname, dispname, type, docname, anchor, priority
+        for typ in self.object_types.keys():
+            for name, (node_id, docname, _) in self.data[typ].items():
+                dispname = self.make_object_display_name(name, typ)
+                yield (name, dispname, typ, docname, node_id, 1)
+    
+    
+    def make_object_display_name(self, name, typ):
+        """Returns the displayed name for the given object."""
+    
+        # Display function names with parentheses if add_function_parentheses
+        # is enabled
+        if typ == "function" and self.env.app.config.add_function_parentheses:
+            return name + "()"
         
-        return objects
+        return name
     
     
-    def make_entity_node_id(self, name, entity_type, document):
-        """Generates a node ID for an entity description"""
-        
-        node_id = make_id(self.env, document, self.name,
-            "-".join([entity_type, name]))
-        
-        # If there is already an other description for the same entity in the
-        # current document, we append a number to make the ID unique. This
-        # allows us to reference the individual descriptions from the indices.
-        alias_cnt = len(self.data["entities"][entity_type][name])
-        if alias_cnt != 0:
-            node_id += "-" + str(alias_cnt)
-        
-        return node_id
-    
-    
-    def add_entity(self, name, entity_type, node_id, location, add_to_index):
+    def register_object(self, name, typ, node_id, add_to_index,
+            location = None):
         """Called by our directives to register a documented entity."""
 
-        self.data["entities"][entity_type][name].append(
-            (node_id, self.env.docname, add_to_index))
+        if name in self.data[typ]:
+            dispname = self.make_object_display_name(name, typ)
+            other_docname = self.data[typ][name][1]
+            type_str = self.get_type_name(self.object_types[typ])
+            _logger.warning(
+                __("Duplicate description of %s %s: Previously described in %s. "
+                    "Use :noindex: with one of them."),
+                type_str, dispname, other_docname, location = location)
+        else:
+            self.data[typ][name] = (node_id, self.env.docname, add_to_index)
     
     
-    def get_full_qualified_name(self, node):
-        return ".".join(self.name, node["cmake:type"], node["cmake:name"])
+    def clear_doc(self, docname):
+        for typ in self.object_types.keys():
+            for name, (_, obj_docname, _) in list(self.data[typ].items()):
+                if obj_docname == docname:
+                    del self.data[typ][name] 
     
     
-    def _make_refnode(self, env, name, entity_type, node_id, docname, builder,
+    def merge_domaindata(self, docnames, otherdata):
+        for typ in self.object_types.keys():
+            for name, obj in otherdata[typ].items():
+                if obj[1] in docnames:
+                    self.data[typ][name] = obj
+    
+    
+    def _make_refnode(self, env, name, typ, node_id, docname, builder,
             fromdocname, contnode):      
         """
         Helper function for generating reference nodes linking to entity
         descriptions.
         """
         
-        # If add_function_parentheses is true, we display macro/function
-        # names with empty parentheses
-        display_name = name
-        if (entity_type == "function" and
-                env.app.config.add_function_parentheses):
-            display_name += "()"
-        
-        title = "{}: {}".format(self.object_types[entity_type].lname, name)     
+        title = "{}: {}".format(self.get_type_name(self.object_types[typ]),
+            name)     
         return make_refnode(builder, fromdocname, docname, node_id, contnode,
             title)
     
@@ -485,18 +480,17 @@ class CMakeDomain(Domain):
         # parameters. We thus need some special treatment here.
         if typ == "param":
             # TODO
-            return
+            return None
         
         # For all other roles, we simply look up the target object in the
         # list of registered entity descriptions for the respective entity type
         # of the given role.
-        entity_type = self._xref_type_to_entity_type[typ]
+        typ = self._xref_type_to_entity_type[typ]
         
-        for name, descriptions in self.data["entities"][entity_type].items():
-            if name == target and len(descriptions[0]) != 0:
-                node_id, docname, _ = descriptions[0]
-                return self._make_refnode(env, name, entity_type, node_id,
-                    docname, builder, fromdocname, contnode)
+        for name, (node_id, docname, _) in self.data[typ].items():
+            if name == target:
+                return self._make_refnode(env, name, typ, node_id, docname,
+                    builder, fromdocname, contnode)
         
         return None
     
@@ -515,7 +509,7 @@ class CMakeDomain(Domain):
         # If we can't determine the entity type from the target string,
         # try all entity types
         resolved_nodes = []
-        for entity_type, obj_type in self.object_types.items():
+        for typ, obj_type in self.object_types.items():
             role = obj_type.roles[0]
             resolved = self.resolve_xref(env, fromdocname, builder, role,
                 target, node, contnode)
@@ -535,6 +529,7 @@ def setup(app):
     
     # Register config settings
     app.add_config_value("cmake_index_common_prefix", [], "env")
+    app.add_config_value("cmake_modules_add_extension", False, "env")
     
     # Register our domain
     app.add_domain(CMakeDomain)

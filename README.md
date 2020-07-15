@@ -26,10 +26,10 @@ extensions = [
 
 *sphinx-cmake_domain* adds the following config settings:
 
-| Setting                      | Default value | Description                                                                     |
-|------------------------------|---------------|---------------------------------------------------------------------------------|
-| cmake_modules_show_extension | `False`       | Show the `.cmake` file extension after module names                             |
-| cmake_index_common_prefix    | `[]`          | A list of prefixes that will be ignored when sorting CMake entities in an index |
+| Setting                     | Default value | Description                                                                    |
+|-----------------------------|---------------|--------------------------------------------------------------------------------|
+| cmake_modules_add_extension | `False`       | Show the `.cmake` file extension after module names                            |
+| cmake_index_common_prefix   | `[]`          | A list of prefixes that will be ignored when sorting CMake objects in an index |
 
 Additionally, the following standard settings are supported:
 
@@ -43,6 +43,11 @@ Additionally, the following standard settings are supported:
 .. cmake:var:: MY_VARIABLE
   
   My first variable ever created!
+
+
+.. cmake:var:: MY_OTHER_VARIABLE "value"
+
+  This one even has a value!
 ```
 
 The following options are supported:
@@ -68,12 +73,13 @@ The following doc fields are supported:
   This macro does crazy things.
 
 
-.. cmake:function:: my_function(<param1> <param2> SOURCES <source1>... [OPTIONAL] [DISPLAY_NAME <name> [FINAL]])
+.. cmake:function:: my_function(<param1> <param2> SOURCES <source1>... [OPTIONAL] (EITHER|OR) [THIS|THAT] [DISPLAY_NAME <name> [FINAL]])
 
   This function does the same, but supports much fancier arguments.
 ```
 
 Directives `cmake:macro` and `cmake:functions` are aliases for each other.
+
 
 The following options are supported:
 
@@ -90,7 +96,7 @@ The following doc fields are supported:
 
 <sup>1</sup> Aliases are: `:parameter:`, `:arg:`, `:argument:`, `:keyword:` and `:option:`
 
-Documented parameters can be referenced from within a macro/function description using the `:cmake:param:` role. For `<param>` style parameters, their name without the brackets must be used (e.g. ``:cmake:param:`param` ``).
+Documented parameters can be referenced from within a macro/function description using the `:cmake:param:` role. For `<param>` style parameters, their name without the brackets must be used (e.g. ``:cmake:param:`param1` ``).
 
 
 ### Documenting modules
@@ -101,7 +107,7 @@ Documented parameters can be referenced from within a macro/function description
   I wrote a module. This is it. I'm proud of it.
 ```
 
-The module name may optionally have a `.cmake` extension. Whether the extension is displayed or not is controlled by the `cmake_modules_show_extension` configuration setting, regardless of whether it is present in the definition.
+The module name may optionally have a `.cmake` extension. Whether the extension is displayed or not is controlled by the `cmake_modules_add_extension` configuration setting, regardless of whether it is present in the definition.
 
 The following options are supported:
 
@@ -111,9 +117,9 @@ The following options are supported:
 | `:noindex:`      | Don't allow cross-referencing this module description. Implies `:noindexentry:` |
 
 
-### Referencing CMake entities
+### Referencing CMake objects
 
-All CMake entities can be referenced using the `:any:` role. In addition to that, the following roles are supported:
+All CMake objects can be referenced using the `:any:` role. In addition to that, the following roles are supported:
 
 | Role             | Description               |
 |------------------|---------------------------|
@@ -124,10 +130,12 @@ All CMake entities can be referenced using the `:any:` role. In addition to that
 
 The target name for `:cmake:func:` and `:cmake:macro:` may be specified with or without trailing parentheses. Whether paraentheses are displayed solely depends on the value of the `add_function_parentheses` config setting.
 
+The target name for `:cmake:module` may be specified with or without the `.cmake` suffix. Whether the suffix is displayed solely depends on the value of the `cmake_modules_add_extension` configuration setting.
+
 
 ### CMake index
 
-If the `html_domain_indices` config setting is enabled, an index of all documented CMake entities is generated in addition to the global index. The CMake index can be referenced using ``:ref:`cmake-index` ``.
+If the `html_domain_indices` config setting is enabled, an index of all documented CMake objects is generated in addition to the global index. The CMake index can be referenced using ``:ref:`cmake-index` ``.
 
 
 ## License

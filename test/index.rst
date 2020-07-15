@@ -25,11 +25,6 @@ Documenting variables
     :default: ON
 
 
-.. cmake:var:: MY_OPTION
-
-    This is a second definition of the same option.
-
-
 .. cmake:var:: NOT_INDEXED
     :noindex:
 
@@ -55,6 +50,8 @@ Documenting macros/functions
         This is a parameter
     :arg <param2>:
         This is an other parameter
+    
+    :cmake:param:`param1` is especially important.
 
 
 .. cmake:function:: my_function(<param1> <param2> SOURCES <source1>... [OPTIONAL] [DISPLAY_NAME <name> [FINAL]])
