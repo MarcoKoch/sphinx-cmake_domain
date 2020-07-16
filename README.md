@@ -73,7 +73,8 @@ The following doc fields are supported:
   This macro does crazy things.
 
 
-.. cmake:function:: my_function(<param1> <param2> SOURCES <source1>... [OPTIONAL] (EITHER|OR) [THIS|THAT] [DISPLAY_NAME <name> [FINAL]])
+.. cmake:function:: my_function(<param1> <param2> SOURCES <source1>... \
+                      [OPTIONAL] (EITHER|OR) [THIS|THAT] [DISPLAY_NAME <name> [FINAL]])
 
   This function does the same, but supports much fancier arguments.
 ```
