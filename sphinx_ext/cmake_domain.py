@@ -129,13 +129,13 @@ class CMakeVariableDescription(CMakeObjectDescription):
     
     
     # Regex used to parse variable description signatures
-    _sig_regex = re.compile(r'(?P<name>\w+)(?:\s+(?P<value>(?:\w+)|(?:".*")))?')
+    _sig_regex = re.compile(r'(?P<name>\w+)(?:\s+(?P<value>.+))?')
     
     
     def handle_signature(self, sig, signode):
         domain = self.env.get_domain("cmake")
     
-        sig_match = self._sig_regex.match(sig)
+        sig_match = self._sig_regex.fullmatch(sig)
         if sig_match is None:
             _logger.error(__("Invalid variable signature: %s"), sig,
                 location = signode)
