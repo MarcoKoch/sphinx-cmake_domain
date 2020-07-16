@@ -26,15 +26,15 @@ extensions = [
 
 *sphinx-cmake_domain* adds the following config settings:
 
-| Setting                     | Default value | Description                                                                    |
-|-----------------------------|---------------|--------------------------------------------------------------------------------|
-| cmake_modules_add_extension | `False`       | Show the `.cmake` file extension after module names                            |
-| cmake_index_common_prefix   | `[]`          | A list of prefixes that will be ignored when sorting CMake objects in an index |
+| Setting                       | Default value | Description                                                                    |
+|-------------------------------|---------------|--------------------------------------------------------------------------------|
+| `cmake_modules_add_extension` | `False`       | Show the `.cmake` file extension after module names                            |
+| `cmake_index_common_prefix`   | `[]`          | A list of prefixes that will be ignored when sorting CMake objects in an index |
 
 Additionally, the following standard settings are supported:
 
-* [add_function_parentheses](https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-add_function_parentheses)
-* [html_domain_indices](https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_domain_indices)
+* [`add_function_parentheses`](https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-add_function_parentheses)
+* [`html_domain_indices`](https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_domain_indices)
 
 
 ### Documenting variables
