@@ -501,7 +501,7 @@ class CMakeDomain(Domain):
         return name
     
     
-    def _warn_duplicate_objects(self, name, typ, location):
+    def _warn_duplicate_object(self, name, typ, location):
         """
         Logs a warning that the given object is described in multiple locations.
         
@@ -522,7 +522,7 @@ class CMakeDomain(Domain):
         """Called by our directives to register a documented entity."""
         
         if name in self.data[typ]:
-            self._warn_duplicate_objects(self, name, location)
+            self._warn_duplicate_object(self, name, location)
             return
 
         self.data[typ][name] = (node_id, self.env.docname, add_to_index)
@@ -540,7 +540,7 @@ class CMakeDomain(Domain):
             for name, obj in otherdata[typ].items():
                 if obj[1] in docnames:
                     if name in self.data[typ]:
-                        self._warn_duplicate_objects(name, typ, location)
+                        self._warn_duplicate_object(name, typ, location)
                         continue
                 
                     self.data[typ][name] = obj
