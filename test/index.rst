@@ -35,7 +35,7 @@ Documenting variables
                ANOTHER_ONE_NOT_LISTED_ON_INDEX
     :noindexentry:
 
-    This variable should be referencable but not appear in any index.
+    This variable should be referencable but not appear on any index.
 
 
 Documenting macros/functions
@@ -76,7 +76,32 @@ Documenting macros/functions
 .. cmake:function:: not_listed_on_index
     :noindexentry:
     
-    This function should be referencable but not appear in any index.
+    This function should be referencable but not appear on any index.
+
+
+Documenting modules
+-------------------
+
+.. cmake:module:: MyModule
+
+  I wrote a module. This is it. I'm proud of it.
+
+
+.. cmake:module:: MyOtherModule.cmake
+
+  This is an extended module. It has an extension.
+
+
+.. cmake:module:: NotIndexed
+    :noindex:
+    
+    This module should not appear in any index.
+
+
+.. cmake:module:: NotListedOnIndex
+    :noindexentry:
+    
+    This module should be referenceable but not appear on any index.
 
 
 Referencing CMake entities
@@ -128,6 +153,31 @@ This links :cmake:macro:`no_args_func` using ``:cmake:func:``.
 This links :cmake:macro:`empty_arglist_func` using ``:cmake:func:``.
 
 This links :cmake:macro:`not_listed_on_index` using ``:cmake:func:``.
+
+
+Modules
+~~~~~~~
+
+This links :any:`MyModule` using ``:any:``.
+
+This links :any:`MyModule.cmake` with its extension using ``:any:``
+
+This links :any:`MyOtherModule` using ``:any:``.
+
+This links :any:`MyOtherModule.cmake` with its extension using ``:any:``.
+
+This links :any:`NotListedOnIndex` using ``:any:``.
+
+This links :cmake:mod:`MyModule` using ``:cmake:mod:``.
+
+This links :cmake:mod:`MyModule.cmake` with its extension using ``:cmake:mod:``
+
+This links :cmake:mod:`MyOtherModule` using ``:cmake:mod:``.
+
+This links :cmake:mod:`MyOtherModule.cmake` with its extension
+using ``:cmake:mod:``.
+
+This links :cmake:mod:`NotListedOnIndex` using ``:cmake:mod:``.
 
 
 Indices

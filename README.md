@@ -120,16 +120,16 @@ The following options are supported:
 
 All CMake objects can be referenced using the `:any:` role. In addition to that, the following roles are supported:
 
-| Role             | Description               |
-|------------------|---------------------------|
-| `:cmake:var:`    | Links to a variable       |
-| `:cmake:func:`   | Links to a macro/function |
-| `:cmake:macro:`  | Alias for `:cmake:func:`  |
-| `:cmake:module:` | Links to a module         |
+| Role           | Description               |
+|----------------|---------------------------|
+| `:cmake:var:`  | Links to a variable       |
+| `:cmake:func:` | Links to a macro/function |
+| `:cmake:macro:`| Alias for `:cmake:func:`  |
+| `:cmake:mod:`  | Links to a module         |
 
 The target name for `:cmake:func:` and `:cmake:macro:` may be specified with or without trailing parentheses. Whether paraentheses are displayed solely depends on the value of the `add_function_parentheses` config setting.
 
-The target name for `:cmake:module` may be specified with or without the `.cmake` suffix. Whether the suffix is displayed solely depends on the value of the `cmake_modules_add_extension` configuration setting.
+The target name for `:cmake:mod` may be specified with or without the `.cmake` suffix. Whether the suffix is displayed solely depends on the value of the `cmake_modules_add_extension` configuration setting.
 
 
 ### CMake index

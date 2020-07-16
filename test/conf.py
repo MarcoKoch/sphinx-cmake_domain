@@ -64,4 +64,8 @@ html_show_sourcelink = False
 
 # -- Options for sphinx_ext.cmake_domain -------------------------------------
 
+# A list of prefixes that will be ignored when sorting CMake objects in an index
 cmake_index_common_prefix = ["MY_", "my_"]
+
+# Show the `.cmake` file extension after module names. Default is False.
+cmake_modules_add_extension = True

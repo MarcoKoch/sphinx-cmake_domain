@@ -55,6 +55,10 @@ __license__ = "BSD 3-Clause"
 _logger = getLogger(__name__)
 
 
+# Optional extension for module names
+_module_ext = ".cmake"
+
+
 def _get_index_sort_str(env, name):
     """
     Returns a string by which an object with the given name shall be sorted in
@@ -114,9 +118,11 @@ class CMakeObjectDescription(ObjectDescription):
         if add_to_index:
             type_str = domain.get_type_name(
                 domain.object_types[self.object_type])
-            index_text = "{} ({})".format(name, type_str)
+            dispname = domain.make_object_display_name(name, self.object_type)
+            index_text = "{} ({})".format(dispname, type_str)
+            key = _get_index_sort_str(self.env, dispname)[0].upper()
             self.indexnode["entries"].append(
-                ("single", index_text, node_id, "", None))
+                ("single", index_text, node_id, "", key))
     
 
 class CMakeVariableDescription(CMakeObjectDescription):
@@ -313,6 +319,50 @@ class CMakeFunctionDescription(CMakeObjectDescription):
         return name
 
 
+class CMakeModuleDescription(CMakeObjectDescription):
+    """Directive describing a CMake module"""
+    
+    object_type = "module"
+    
+    
+    def handle_signature(self, sig, signode):
+    
+        # The module name may be specified with a '.cmake' extension.
+        # We remove that extension for our internal naming
+        name = sig
+        if name.endswith(_module_ext):
+            name = name[:-len(_module_ext)]
+        
+        # Now we re-add the extension for the display name if
+        # cmake_modules_add_extension is enabled.
+        dispname = name
+        if self.env.app.config.cmake_modules_add_extension:
+            dispname += _module_ext
+        
+        signode += desc_name(text = dispname)
+        return name
+
+
+class CMakeModuleXRefRole(XRefRole):
+    """
+    Special xref role for referencing CMake module descriptions.
+    
+    This makes sure to handle the file extension correctly.
+    """
+    
+    def process_link(self, env, refnode, has_explicit_title, title, target):
+        # Add the file extension to the title
+        if (not title.endswith(_module_ext) and 
+                self.env.app.config.cmake_modules_add_extension):
+            title += _module_ext
+    
+        # Remove the file extension from the target
+        if target.endswith(_module_ext):
+            target = target[:-len(_module_ext)]
+        
+        return title, target
+
+
 class CMakeIndex(Index):
     """An index for CMake entities"""
     
@@ -374,12 +424,13 @@ class CMakeDomain(Domain):
     directives = {
         "var": CMakeVariableDescription,
         "macro": CMakeFunctionDescription,
-        "function": CMakeFunctionDescription
+        "function": CMakeFunctionDescription,
+        "module": CMakeModuleDescription
     }
     object_types = {
         "variable": ObjType(_("variable"), "var"),
-        "function": ObjType(_("macro/function"), "macro", "function"),
-        "module": ObjType(_("module"), "module")
+        "function": ObjType(_("macro/function"), "macro", "func"),
+        "module": ObjType(_("module"), "mod")
     }
     initial_data = {
         "variable": {}, # name -> (node_id, docname, add_to_index)
@@ -390,7 +441,7 @@ class CMakeDomain(Domain):
         "var": XRefRole(),
         "func": XRefRole(fix_parens = True),
         "macro": XRefRole(fix_parens = True),
-        "module": XRefRole()
+        "mod": CMakeModuleXRefRole()
     }
     
     
@@ -400,7 +451,7 @@ class CMakeDomain(Domain):
         "var": "variable",
         "func": "function",
         "macro": "function",
-        "module": "module"
+        "mod": "module"
     }
     
     
@@ -427,13 +478,18 @@ class CMakeDomain(Domain):
         if typ == "function" and self.env.app.config.add_function_parentheses:
             return name + "()"
         
+        # Display module names with file extension if
+        # cmake_modules_add_extension is enabled
+        if typ == "module" and self.env.app.config.cmake_modules_add_extension:
+            return name + _module_ext
+        
         return name
     
     
     def register_object(self, name, typ, node_id, add_to_index,
             location = None):
         """Called by our directives to register a documented entity."""
-
+        
         if name in self.data[typ]:
             dispname = self.make_object_display_name(name, typ)
             other_docname = self.data[typ][name][1]
@@ -475,8 +531,8 @@ class CMakeDomain(Domain):
     
     def resolve_xref(self, env, fromdocname, builder, typ, target, node,
             contnode):
-        typ = self._xref_type_to_entity_type[typ]      
-         
+        typ = self._xref_type_to_entity_type[typ]    
+        
         for name, (node_id, docname, _) in self.data[typ].items():
             if name == target:
                 return self._make_refnode(env, name, typ, node_id, docname,
@@ -488,12 +544,20 @@ class CMakeDomain(Domain):
     def resolve_any_xref(self, env, fromdocname, builder, target, node,
             contnode):
             
-        # Macro/functions may be specified with or without parentheses
+        # Macro/functions may be specified with empty parentheses
         if target.endswith("()"):
             target = target[:-2]
             resolved = self.resolve_xref(env, fromdocname, builder, "func",
                 target, node, contnode)
             return ([(self.name + ":func", resolved)] if resolved is not None 
+                else [])
+        
+        # Module names may be specified with a file extension
+        if target.endswith(_module_ext):
+            target = target[:-len(_module_ext)]
+            resolved = self.resolve_xref(env, fromdocname, builder, "mod",
+                target, node, contnode)
+            return ([(self.name + ":mod", resolved)] if resolved is not None
                 else [])
         
         # If we can't determine the entity type from the target string,
