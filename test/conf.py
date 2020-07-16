@@ -60,8 +60,6 @@ html_copy_source = False
 html_show_sourcelink = False
 
 
-
-
 # -- Options for sphinx_ext.cmake_domain -------------------------------------
 
 # A list of prefixes that will be ignored when sorting CMake objects in an index
