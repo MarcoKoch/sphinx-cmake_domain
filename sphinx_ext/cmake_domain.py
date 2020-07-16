@@ -35,8 +35,9 @@ from os import path
 
 from docutils.parsers.rst import directives
 
-from sphinx.addnodes import desc_annotation, desc_name, desc_optional, \
-    desc_parameter, desc_parameterlist, desc_signature
+from sphinx.addnodes import (
+    desc_annotation, desc_name, desc_optional, desc_parameter,
+    desc_parameterlist, desc_signature)
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Domain, Index, ObjType
 from sphinx.locale import _, __
@@ -500,20 +501,31 @@ class CMakeDomain(Domain):
         return name
     
     
-    def register_object(self, name, typ, node_id, add_to_index,
-            location = None):
+    def _warn_duplicate_objects(self, name, typ, location):
+        """
+        Logs a warning that the given object is described in multiple locations.
+        
+        The location of the previous description is read from `self.data`.
+        """
+    
+        dispname = self.make_object_display_name(name, typ)
+        type_str = self.get_type_name(self.object_types[typ])
+        other_docname = self.data[typ][name][1]
+        
+        _logger.warning(
+            __("Duplicate description of %s %s: Previously described in %s. "
+                "Use :noindex: with one of them."),
+            type_str, dispname, other_docname, location = location)
+    
+    
+    def register_object(self, name, typ, node_id, add_to_index, location):
         """Called by our directives to register a documented entity."""
         
         if name in self.data[typ]:
-            dispname = self.make_object_display_name(name, typ)
-            other_docname = self.data[typ][name][1]
-            type_str = self.get_type_name(self.object_types[typ])
-            _logger.warning(
-                __("Duplicate description of %s %s: Previously described in %s. "
-                    "Use :noindex: with one of them."),
-                type_str, dispname, other_docname, location = location)
-        else:
-            self.data[typ][name] = (node_id, self.env.docname, add_to_index)
+            self._warn_duplicate_objects(self, name, location)
+            return
+
+        self.data[typ][name] = (node_id, self.env.docname, add_to_index)
     
     
     def clear_doc(self, docname):
@@ -527,6 +539,10 @@ class CMakeDomain(Domain):
         for typ in self.object_types.keys():
             for name, obj in otherdata[typ].items():
                 if obj[1] in docnames:
+                    if name in self.data[typ]:
+                        self._warn_duplicate_objects(name, typ, location)
+                        continue
+                
                     self.data[typ][name] = obj
     
     
