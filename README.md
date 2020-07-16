@@ -106,7 +106,7 @@ The following doc fields are supported:
   I wrote a module. This is it. I'm proud of it.
 ```
 
-The module name may optionally have a `.cmake` extension. Whether the extension is displayed or not is controlled by the `cmake_modules_add_extension` configuration setting, regardless of whether it is present in the definition.
+The module name may optionally have a `.cmake` extension. Whether the extension is displayed or not is controlled by the `cmake_modules_add_extension` configuration setting, regardless of whether it is present in the definition or not.
 
 The following options are supported:
 
@@ -118,7 +118,7 @@ The following options are supported:
 
 ### Referencing CMake objects
 
-All CMake objects can be referenced using the `:any:` role. In addition to that, the following roles are supported:
+All documented CMake objects can be referenced using the `:any:` role. In addition to that, the following roles are supported:
 
 | Role           | Description               |
 |----------------|---------------------------|
@@ -127,9 +127,9 @@ All CMake objects can be referenced using the `:any:` role. In addition to that,
 | `:cmake:macro:`| Alias for `:cmake:func:`  |
 | `:cmake:mod:`  | Links to a module         |
 
-The target name for `:cmake:func:` and `:cmake:macro:` may be specified with or without trailing parentheses. Whether paraentheses are displayed solely depends on the value of the `add_function_parentheses` config setting.
+The target name for `:cmake:func:` and `:cmake:macro:` may be specified with or without trailing parentheses. Whether parentheses are displayed solely depends on the value of the `add_function_parentheses` config setting, regardless of whether they are present in source code or not.
 
-The target name for `:cmake:mod` may be specified with or without the `.cmake` suffix. Whether the suffix is displayed solely depends on the value of the `cmake_modules_add_extension` configuration setting.
+The target name for `:cmake:mod` may be specified with or without the `.cmake` suffix. Whether the suffix is displayed solely depends on the value of the `cmake_modules_add_extension` configuration setting, regardless of whether it is pressent in the source code or not.
 
 
 ### CMake index
@@ -139,7 +139,7 @@ If the `html_domain_indices` config setting is enabled, an index of all document
 
 ## License
 
-This extension is provided as open-source software under the 3-Clause BSD license. See file [LICENSE](LICENSE) for further information.
+This extension is open-source software, provided under the 3-Clause BSD license. See file [LICENSE](LICENSE) for further information.
 
 
 ## Bugs, feedback & support
@@ -155,7 +155,7 @@ Pull requests are highly appreciated on [GitHub](https://github.com/marcokoch/sp
 
 ## Similar software
 
-This extension is similar to the [sphinxcontrib-cmakedomain](https://github.com/sphinx-contrib/cmakedomain) extension. The latter seems to be no longer developed, though, and does not work with recent Sphinx versions. Also, this extension has some additional features over sphinxcontrib-cmakedomain and does not depend on any other packages except Sphinx.
+This extension is similar to the [sphinxcontrib-cmakedomain](https://github.com/sphinx-contrib/cmakedomain) extension. The latter seems to be no longer developed, though, and does no longer work with recent Sphinx versions. Also, this extension has some additional features over *sphinxcontrib-cmakedomain* and does not depend on any other packages except Sphinx.
 
 
 ## Contact
