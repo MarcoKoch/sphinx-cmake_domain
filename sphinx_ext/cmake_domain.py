@@ -91,15 +91,6 @@ class CMakeObjectDescription(ObjectDescription):
         raise NotImplementedError()
     
     
-    def handle_signature(self, sig, signode):    
-        # By default, just use the complete signature as object name.
-        # Subclasses for objects with more complex signatures (e.g. functions)
-        # should override this implementation.
-        signode += desc_name(text = sig)
-        
-        return sig
-    
-    
     def add_target_and_index(self, name, sig, signode):
         domain = self.env.get_domain("cmake")
         
@@ -136,7 +127,30 @@ class CMakeVariableDescription(CMakeObjectDescription):
     
     object_type = "variable"
     
-    # TODO: Support values
+    
+    # Regex used to parse variable description signatures
+    _sig_regex = re.compile(r'(?P<name>\w+)(?:\s+(?P<value>(?:\w+)|(?:".*")))?')
+    
+    
+    def handle_signature(self, sig, signode):
+        domain = self.env.get_domain("cmake")
+    
+        sig_match = self._sig_regex.match(sig)
+        if sig_match is None:
+            _logger.error(__("Invalid variable signature: %s"), sig,
+                location = signode)
+            signode += desc_name(text = sig)
+            return sig
+        
+        name = sig_match["name"]
+        value = sig_match["value"]
+        dispname = domain.make_object_display_name(name, "variable")
+        
+        signode += desc_name(text = dispname)
+        if value is not None:
+            signode += desc_annotation(text = " = " + value)
+        
+        return name
 
 
 class CMakeFunctionDescription(CMakeObjectDescription):

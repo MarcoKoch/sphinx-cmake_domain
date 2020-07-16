@@ -4,7 +4,7 @@ sphinx-cmake_domain test
 Documenting variables
 ---------------------
 
-.. cmake:var:: MY_VARIABLE
+.. cmake:var:: MY_VARIABLE "value"
 
     This is a variable.
 
@@ -17,7 +17,7 @@ Documenting variables
     :default: "Hello World"
 
 
-.. cmake:var:: MY_OPTION
+.. cmake:var:: MY_OPTION OFF
 
     This is a build option.
     
