@@ -16,7 +16,7 @@ In your `conf.py` add:
 
 ```python
 extensions = [
-  "sphinx_ext.cmake_comain",
+  "sphinx_ext.cmake_domain",
   # ...
 ]
 ```
