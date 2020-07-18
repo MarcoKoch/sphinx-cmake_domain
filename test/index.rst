@@ -52,12 +52,15 @@ Documenting macros/functions
         This is an other parameter
 
 
-.. cmake:function:: my_function(<param1> <param2> SOURCES <source1>... [OPTIONAL] [DISPLAY_NAME <name> [FINAL]])
+.. cmake:function:: my_function(<param1> <param2> \
+                      SOURCES <source1>... \
+                      [OPTIONAL] EITHER|(OR <or_value>) [THIS|THAT] \
+                      [DISPLAY_NAME <name> [FINAL]])
 
   This function does the same, but supports much fancier arguments.
 
 
-.. cmake:function:: no_args_func
+.. cmake:function:: no_args_func()
 
     This function has no documented arguments.
 
@@ -73,7 +76,7 @@ Documenting macros/functions
     This function should not appear in any index.
 
 
-.. cmake:function:: not_listed_on_index
+.. cmake:function:: not_listed_on_index()
     :noindexentry:
     
     This function should be referencable but not appear on any index.
