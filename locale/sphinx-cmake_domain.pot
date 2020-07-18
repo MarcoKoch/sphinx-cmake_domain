@@ -1,0 +1,101 @@
+# Translations template for sphinx-cmake_domain.
+# Copyright (C) 2020 Marco Koch
+# This file is distributed under the same license as the sphinx-cmake_domain
+# project.
+# Marco Koch <marco-koch@t-online.de>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: sphinx-cmake_domain 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/marcokoch/sphinx-"
+"cmake_domain/issues\n"
+"POT-Creation-Date: 2020-07-18 19:43+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: sphinx_ext/cmake_domain.py:268
+msgid ""
+"A node of type {node_type} was encountered outside a "
+"{paramlist_node_type}."
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:296
+msgid ""
+"Encountered nested {paramlist_node_type} nodes. Outer node defined here: "
+"{source_file}, {line}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:478
+msgid ""
+"depart_node() called on this node without previous call to visit_node() "
+"with the same translator"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:537
+msgid "Type"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:538
+msgid "Default value"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:555
+msgid "Invalid variable signature: {sig}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:578
+msgid "Parameters"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:615
+msgid "Unexpected text at column {pos}: {unexpected}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:624
+msgid "Unexpected token at position {pos}: {raw} ({token_type})"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:767
+msgid "Unexpected end of parameter list"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:774
+msgid "Invalid macro/function signature: {sig}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:790
+msgid "Failed to parse parameters for macro/function {name}: {msg}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:856
+msgid "CMake Index"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:857 sphinx_ext/cmake_domain.py:910
+msgid "CMake"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:920
+msgid "variable"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:921
+msgid "macro/function"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:922
+msgid "module"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:974
+msgid ""
+"Duplicate description of {typ} {name}: Previously described in "
+"{other_docname}. Use :noindex: with one of them."
+msgstr ""
+

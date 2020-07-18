@@ -293,8 +293,9 @@ class TranslatorState:
         
         if self._paramlist_node is not None:
             _logger.error(
-                __("Encountered nested desc_cmake_parameterlist nodes. "
+                __("Encountered nested {paramlist_node_type} nodes. "
                         "Outer node defined here: {source_file}, {line}").format(
+                    paramlist_node_type = desc_cmake_parameterlist,
                     source_file = get_node_source(self._paramlist_node),
                     line = get_node_line(self._paramlist_node)),
                 location = node)
@@ -1086,7 +1087,7 @@ def setup(app):
     
     # Initialize localization
     package_dir = path.abspath(path.dirname(__file__))
-    locale_dir = path.join(package_dir, "locales")
+    locale_dir = path.join(package_dir, "locale")
     app.add_message_catalog("sphinx-cmake_domain", locale_dir)
     
     # Register config settings

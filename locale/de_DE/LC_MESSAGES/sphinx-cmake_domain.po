@@ -1,0 +1,110 @@
+# German (Germany) translations for sphinx-cmake_domain.
+# Copyright (C) 2020 Marco Koch
+# This file is distributed under the same license as the sphinx-cmake_domain
+# project.
+# Marco Koch <marco-koch@t-online.de>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sphinx-cmake_domain 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/marcokoch/sphinx-"
+"cmake_domain/issues\n"
+"POT-Creation-Date: 2020-07-18 19:43+0200\n"
+"PO-Revision-Date: 2020-07-18 19:36+0200\n"
+"Last-Translator: Marco Koch <marco-koch@t-online.de>\n"
+"Language: de_DE\n"
+"Language-Team: de_DE <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: sphinx_ext/cmake_domain.py:268
+msgid ""
+"A node of type {node_type} was encountered outside a "
+"{paramlist_node_type}."
+msgstr ""
+"Ein Knoten des Typs {node_type} wurde außerhalb eines "
+"{paramlist_node_type} aufgefunden."
+
+#: sphinx_ext/cmake_domain.py:296
+msgid ""
+"Encountered nested {paramlist_node_type} nodes. Outer node defined here: "
+"{source_file}, {line}"
+msgstr ""
+"Verschachtelte Knoten des Typs {paramlist_node_type} aufgefunden. Der "
+"äußere Knoten wurde hier definiert: {source_file}, {line}"
+
+#: sphinx_ext/cmake_domain.py:478
+msgid ""
+"depart_node() called on this node without previous call to visit_node() "
+"with the same translator"
+msgstr ""
+"depart_node() wurde auf diesem Knoten aufgerufen, ohne zuvor visit_node() "
+"mit dem selben Übersetzer darauf auszuführen"
+
+#: sphinx_ext/cmake_domain.py:537
+msgid "Type"
+msgstr "Typ"
+
+#: sphinx_ext/cmake_domain.py:538
+msgid "Default value"
+msgstr "Standardwert"
+
+#: sphinx_ext/cmake_domain.py:555
+msgid "Invalid variable signature: {sig}"
+msgstr "Unzulässige Variablensignatur: {sig}"
+
+#: sphinx_ext/cmake_domain.py:578
+msgid "Parameters"
+msgstr "Parameter"
+
+#: sphinx_ext/cmake_domain.py:615
+msgid "Unexpected text at column {pos}: {unexpected}"
+msgstr "Unerwarteter Text in Spalte {pos}: {unexpected}"
+
+#: sphinx_ext/cmake_domain.py:624
+msgid "Unexpected token at position {pos}: {raw} ({token_type})"
+msgstr "Unerwarteter Token an Position {pos}: {raw} ({token_type})"
+
+#: sphinx_ext/cmake_domain.py:767
+msgid "Unexpected end of parameter list"
+msgstr "Unerwartetes Ende der Parameterliste"
+
+#: sphinx_ext/cmake_domain.py:774
+msgid "Invalid macro/function signature: {sig}"
+msgstr "Unzulässige Makro-/Funktionssignatur: {sig}"
+
+#: sphinx_ext/cmake_domain.py:790
+msgid "Failed to parse parameters for macro/function {name}: {msg}"
+msgstr "Fehler beim Einlesen der Parameter des Makros/der Funktion {name}: {msg}"
+
+#: sphinx_ext/cmake_domain.py:856
+msgid "CMake Index"
+msgstr "CMake Index"
+
+#: sphinx_ext/cmake_domain.py:857 sphinx_ext/cmake_domain.py:910
+msgid "CMake"
+msgstr "CMake"
+
+#: sphinx_ext/cmake_domain.py:920
+msgid "variable"
+msgstr "Variable"
+
+#: sphinx_ext/cmake_domain.py:921
+msgid "macro/function"
+msgstr "Makro/Funktion"
+
+#: sphinx_ext/cmake_domain.py:922
+msgid "module"
+msgstr "Modul"
+
+#: sphinx_ext/cmake_domain.py:974
+msgid ""
+"Duplicate description of {typ} {name}: Previously described in "
+"{other_docname}. Use :noindex: with one of them."
+msgstr ""
+"Mehrfache Beschreibung von {typ} {name}: Zuvor beschrieben in "
+"{other_docname}. Nutzen Sie :noindex: mit einer der Beschreibungen."
+
