@@ -70,7 +70,7 @@ Documenting macros/functions
     This function has an empty argument list.
 
 
-.. cmake:function:: not_indexed()
+.. cmake:function:: not_indexed(
     :noindex:
 
     This function should not appear in any index.

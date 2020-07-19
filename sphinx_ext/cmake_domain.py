@@ -41,7 +41,7 @@ from sphinx.addnodes import (
     desc_parameterlist, desc_signature)
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Domain, Index, ObjType
-from sphinx.locale import _, __
+from sphinx.locale import get_translation
 from sphinx.roles import XRefRole
 from sphinx.util.docfields import Field, GroupedField
 from sphinx.util.logging import getLogger
@@ -49,14 +49,18 @@ from sphinx.util.nodes import (
     get_node_line, get_node_source, make_id, make_refnode, traverse_parent)
 
 
-__version__ = "0.1.0.dev1"
+__version__ = "0.1.0-beta"
 __author__ = "Marco Koch"
-__copyright__ = "Copyright 2020, Marco Koch"
 __license__ = "BSD 3-Clause"
 
 
 # Optional extension for module names
 _module_ext = ".cmake"
+
+
+message_catalog = "sphinx-cmake_domain"
+_ = get_translation(message_catalog)
+__ = get_translation(message_catalog, "console")
 
 
 _logger = getLogger(__name__)
@@ -1088,7 +1092,7 @@ def setup(app):
     # Initialize localization
     package_dir = path.abspath(path.dirname(__file__))
     locale_dir = path.join(package_dir, "locale")
-    app.add_message_catalog("sphinx-cmake_domain", locale_dir)
+    app.add_message_catalog(message_catalog, locale_dir)
     
     # Register config settings
     app.add_config_value("cmake_index_common_prefix", [], "env")

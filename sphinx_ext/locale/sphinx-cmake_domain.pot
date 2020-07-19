@@ -1,0 +1,80 @@
+#: sphinx_ext/cmake_domain.py:272
+msgid ""
+"A node of type {node_type} was encountered outside a "
+"{paramlist_node_type}."
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:300
+msgid ""
+"Encountered nested {paramlist_node_type} nodes. Outer node defined here: "
+"{source_file}, {line}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:482
+msgid ""
+"depart_node() called on this node without previous call to visit_node() "
+"with the same translator"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:541
+msgid "Type"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:542
+msgid "Default value"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:559
+msgid "Invalid variable signature: {sig}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:582
+msgid "Parameters"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:619
+msgid "Unexpected text at column {pos}: {unexpected}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:628
+msgid "Unexpected token at position {pos}: {raw} ({token_type})"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:771
+msgid "Unexpected end of parameter list"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:778
+msgid "Invalid macro/function signature: {sig}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:794
+msgid "Failed to parse parameters for macro/function {name}: {msg}"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:860
+msgid "CMake Index"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:861 sphinx_ext/cmake_domain.py:914
+msgid "CMake"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:924
+msgid "variable"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:925
+msgid "macro/function"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:926
+msgid "module"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:978
+msgid ""
+"Duplicate description of {typ} {name}: Previously described in "
+"{other_docname}. Use :noindex: with one of them."
+msgstr ""
+

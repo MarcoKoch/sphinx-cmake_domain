@@ -1,2 +1,9 @@
 __pycache__
 *.pyc
+/build/
+/dist/
+/install/
+/.eggs/
+/*.egg-info/
+test/_build/
+*.mo

@@ -1,0 +1,5 @@
+include README.md
+include LICENSE
+include sphinx_ext/*.py
+
+recursive-include sphinx_ext/locale *.pot *.po
