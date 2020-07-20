@@ -49,7 +49,7 @@ from sphinx.util.nodes import (
     get_node_line, get_node_source, make_id, make_refnode, traverse_parent)
 
 
-__version__ = "0.1.0-beta"
+__version__ = "0.9.0-beta"
 __author__ = "Marco Koch"
 __license__ = "BSD 3-Clause"
 
