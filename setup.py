@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
-from distutils.command.build import build
 from setuptools import setup
+from distutils.command.build import build
 
 
 # Override the build command to automatically compile message catalogs
