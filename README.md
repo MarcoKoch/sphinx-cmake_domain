@@ -2,10 +2,21 @@
 
 A [Sphinx](https://www.sphinx-doc.org) extension that adds a [CMake](https://cmake.org) domain.
 
+*NOTE:*
+This software is currently in beta state. It is feature-complete for the first release and ready for being tested. There may still be bugs, though.
+
 
 ## Installation
 
-TODO
+*TODO: Update this when the package becomes available on PyPI.*
+
+Clone the sources and install via pip:
+
+```bash
+git clone https://github.com/marcokoch/sphinx-cmake_domain
+cd sphinx-cmake_domain
+pip install .
+```
 
 
 ## Usage
