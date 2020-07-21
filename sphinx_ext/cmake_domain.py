@@ -509,6 +509,17 @@ class CMakeObjectDescription(ObjectDescription):
         raise NotImplementedError()
     
     
+    def handle_signature(self, sig, signode):
+        domain = self.env.get_domain("cmake")
+    
+        # By default, just use the entire signature as object name
+        name = sig
+        dispname = domain.make_object_display_name(name, self.object_type)
+        
+        signode += desc_name(text = dispname)
+        return name
+    
+    
     def add_target_and_index(self, name, sig, signode):
         domain = self.env.get_domain("cmake")
         
@@ -827,6 +838,12 @@ class CMakeModuleDescription(CMakeObjectDescription):
         return name
 
 
+class CMakeTargetDescription(CMakeObjectDescription):
+    """Directive describing a CMake build target."""
+    
+    object_type = "target"
+
+
 # Roles
 # -------------------------------------------------------------
 
@@ -918,33 +935,38 @@ class CMakeDomain(Domain):
         "var": CMakeVariableDescription,
         "macro": CMakeFunctionDescription,
         "function": CMakeFunctionDescription,
-        "module": CMakeModuleDescription
+        "module": CMakeModuleDescription,
+        "target": CMakeTargetDescription
     }
     object_types = {
         "variable": ObjType(_("variable"), "var"),
         "function": ObjType(_("macro/function"), "macro", "func"),
-        "module": ObjType(_("module"), "mod")
+        "module": ObjType(_("module"), "mod"),
+        "target": ObjType(_("target"), "tgt")
     }
     initial_data = {
         "variable": {}, # name -> (node_id, docname, add_to_index)
         "function": {}, # name -> (node_id, docname, add_to_index)
         "module": {}, # name -> (node_id, docname, add_to_index)
+        "target": {} # name -> (node_id, docname, add_to_index)
     }
     roles = {
         "var": XRefRole(),
         "func": XRefRole(fix_parens = True),
         "macro": XRefRole(fix_parens = True),
-        "mod": CMakeModuleXRefRole()
+        "mod": CMakeModuleXRefRole(),
+        "tgt": XRefRole()
     }
     
     
     # Maps the type of a xref role to the entity type referenced by that role
     # (as used in object_types).
-    _xref_type_to_entity_type = {
+    _xref_type_to_object_type = {
         "var": "variable",
         "func": "function",
         "macro": "function",
-        "mod": "module"
+        "mod": "module",
+        "tgt": "target"
     }
     
     
@@ -1041,7 +1063,7 @@ class CMakeDomain(Domain):
     
     def resolve_xref(self, env, fromdocname, builder, typ, target, node,
             contnode):
-        typ = self._xref_type_to_entity_type[typ]    
+        typ = self._xref_type_to_object_type[typ]    
         
         for name, (node_id, docname, _) in self.data[typ].items():
             if name == target:

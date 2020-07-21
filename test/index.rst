@@ -107,6 +107,26 @@ Documenting modules
     This module should be referenceable but not appear on any index.
 
 
+Documenting targets
+-------------------
+
+.. cmake:target:: myapp
+
+  Build this and be impressed.
+
+
+.. cmake:target:: not-indexed
+    :noindex:
+    
+    This target should not appear in any index.
+
+
+.. cmake:target:: not-listed-on-index
+    :noindexentry:
+    
+    This target should be referenceable but not appear on any index.
+
+
 Referencing CMake entities
 --------------------------
 
@@ -181,6 +201,18 @@ This links :cmake:mod:`MyOtherModule.cmake` with its extension
 using ``:cmake:mod:``.
 
 This links :cmake:mod:`NotListedOnIndex` using ``:cmake:mod:``.
+
+
+Targets
+~~~~~~~
+
+This links :any:`myapp` using ``:any:``.
+
+This links :any:`not-listed-on-index` using ``:any:``.
+
+This links :cmake:tgt:`myapp` using ``:cmake:tgt:``.
+
+This links :cmake:tgt:`not-listed-on-index` using ``:cmake:tgt:``.
 
 
 Indices

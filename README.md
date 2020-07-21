@@ -129,6 +129,22 @@ The following options are supported:
 | `:noindex:`      | Don't allow cross-referencing this module description. Implies `:noindexentry:` |
 
 
+### Documenting build targets
+
+```rst
+.. cmake:target:: myapp
+
+  Build this and be impressed.
+```
+
+The following options are supported:
+
+| Option           | Description                                                                             |
+|------------------|-----------------------------------------------------------------------------------------|
+| `:noindexentry:` | Don't add this macro/function description to the index                                  |
+| `:noindex:`      | Don't allow cross-referencing this macro/function description. Implies `:noindexentry:` |
+
+
 ### Referencing CMake objects
 
 All documented CMake objects can be referenced using the `:any:` role. In addition to that, the following roles are supported:
@@ -139,6 +155,7 @@ All documented CMake objects can be referenced using the `:any:` role. In additi
 | `:cmake:func:` | Links to a macro/function |
 | `:cmake:macro:`| Alias for `:cmake:func:`  |
 | `:cmake:mod:`  | Links to a module         |
+| `:cmake:tgt:`  | Links to a build target   |
 
 The target name for `:cmake:func:` and `:cmake:macro:` may be specified with or without trailing parentheses. Whether parentheses are displayed solely depends on the value of the `add_function_parentheses` config setting, regardless of whether they are present in source code or not.
 

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version:  0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/marcokoch/sphinx-"
 "cmake_domain/issues\n"
-"POT-Creation-Date: 2020-07-19 06:29+0200\n"
+"POT-Creation-Date: 2020-07-21 16:25+0200\n"
 "PO-Revision-Date: 2020-07-19 06:28+0200\n"
 "Last-Translator: Marco Koch <marco-koch@t-online.de>\n"
 "Language: de_DE\n"
@@ -44,63 +44,67 @@ msgstr ""
 "depart_node() wurde auf diesem Knoten aufgerufen, ohne zuvor visit_node()"
 " mit dem selben Übersetzer darauf auszuführen"
 
-#: sphinx_ext/cmake_domain.py:541
+#: sphinx_ext/cmake_domain.py:552
 msgid "Type"
 msgstr "Typ"
 
-#: sphinx_ext/cmake_domain.py:542
+#: sphinx_ext/cmake_domain.py:553
 msgid "Default value"
 msgstr "Standardwert"
 
-#: sphinx_ext/cmake_domain.py:559
+#: sphinx_ext/cmake_domain.py:570
 msgid "Invalid variable signature: {sig}"
 msgstr "Unzulässige Variablensignatur: {sig}"
 
-#: sphinx_ext/cmake_domain.py:582
+#: sphinx_ext/cmake_domain.py:593
 msgid "Parameters"
 msgstr "Parameter"
 
-#: sphinx_ext/cmake_domain.py:619
+#: sphinx_ext/cmake_domain.py:630
 msgid "Unexpected text at column {pos}: {unexpected}"
 msgstr "Unerwarteter Text in Spalte {pos}: {unexpected}"
 
-#: sphinx_ext/cmake_domain.py:628
+#: sphinx_ext/cmake_domain.py:639
 msgid "Unexpected token at position {pos}: {raw} ({token_type})"
 msgstr "Unerwarteter Token an Position {pos}: {raw} ({token_type})"
 
-#: sphinx_ext/cmake_domain.py:771
+#: sphinx_ext/cmake_domain.py:782
 msgid "Unexpected end of parameter list"
 msgstr "Unerwartetes Ende der Parameterliste"
 
-#: sphinx_ext/cmake_domain.py:778
+#: sphinx_ext/cmake_domain.py:789
 msgid "Invalid macro/function signature: {sig}"
 msgstr "Unzulässige Makro-/Funktionssignatur: {sig}"
 
-#: sphinx_ext/cmake_domain.py:794
+#: sphinx_ext/cmake_domain.py:805
 msgid "Failed to parse parameters for macro/function {name}: {msg}"
 msgstr "Fehler beim Einlesen der Parameter des Makros/der Funktion {name}: {msg}"
 
-#: sphinx_ext/cmake_domain.py:860
+#: sphinx_ext/cmake_domain.py:877
 msgid "CMake Index"
 msgstr "CMake-Index"
 
-#: sphinx_ext/cmake_domain.py:861 sphinx_ext/cmake_domain.py:914
+#: sphinx_ext/cmake_domain.py:878 sphinx_ext/cmake_domain.py:931
 msgid "CMake"
 msgstr "CMake"
 
-#: sphinx_ext/cmake_domain.py:924
+#: sphinx_ext/cmake_domain.py:942
 msgid "variable"
 msgstr "Variable"
 
-#: sphinx_ext/cmake_domain.py:925
+#: sphinx_ext/cmake_domain.py:943
 msgid "macro/function"
 msgstr "Makro/Funktion"
 
-#: sphinx_ext/cmake_domain.py:926
+#: sphinx_ext/cmake_domain.py:944
 msgid "module"
 msgstr "Modul"
 
-#: sphinx_ext/cmake_domain.py:978
+#: sphinx_ext/cmake_domain.py:945
+msgid "target"
+msgstr "Ziel"
+
+#: sphinx_ext/cmake_domain.py:1000
 msgid ""
 "Duplicate description of {typ} {name}: Previously described in "
 "{other_docname}. Use :noindex: with one of them."

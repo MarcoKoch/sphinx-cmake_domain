@@ -16,63 +16,67 @@ msgid ""
 "with the same translator"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:541
+#: sphinx_ext/cmake_domain.py:552
 msgid "Type"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:542
+#: sphinx_ext/cmake_domain.py:553
 msgid "Default value"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:559
+#: sphinx_ext/cmake_domain.py:570
 msgid "Invalid variable signature: {sig}"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:582
+#: sphinx_ext/cmake_domain.py:593
 msgid "Parameters"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:619
+#: sphinx_ext/cmake_domain.py:630
 msgid "Unexpected text at column {pos}: {unexpected}"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:628
+#: sphinx_ext/cmake_domain.py:639
 msgid "Unexpected token at position {pos}: {raw} ({token_type})"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:771
+#: sphinx_ext/cmake_domain.py:782
 msgid "Unexpected end of parameter list"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:778
+#: sphinx_ext/cmake_domain.py:789
 msgid "Invalid macro/function signature: {sig}"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:794
+#: sphinx_ext/cmake_domain.py:805
 msgid "Failed to parse parameters for macro/function {name}: {msg}"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:860
+#: sphinx_ext/cmake_domain.py:877
 msgid "CMake Index"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:861 sphinx_ext/cmake_domain.py:914
+#: sphinx_ext/cmake_domain.py:878 sphinx_ext/cmake_domain.py:931
 msgid "CMake"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:924
+#: sphinx_ext/cmake_domain.py:942
 msgid "variable"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:925
+#: sphinx_ext/cmake_domain.py:943
 msgid "macro/function"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:926
+#: sphinx_ext/cmake_domain.py:944
 msgid "module"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:978
+#: sphinx_ext/cmake_domain.py:945
+msgid "target"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:1000
 msgid ""
 "Duplicate description of {typ} {name}: Previously described in "
 "{other_docname}. Use :noindex: with one of them."
