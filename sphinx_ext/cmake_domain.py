@@ -945,10 +945,8 @@ class CMakeDomain(Domain):
         "target": ObjType(_("target"), "tgt")
     }
     initial_data = {
-        "variable": {}, # name -> (node_id, docname, add_to_index)
-        "function": {}, # name -> (node_id, docname, add_to_index)
-        "module": {}, # name -> (node_id, docname, add_to_index)
-        "target": {} # name -> (node_id, docname, add_to_index)
+        # type -> name -> (node_id, docname, add_to_index)
+        "objects": defaultdict(dict)
     }
     roles = {
         "var": XRefRole(),
@@ -972,17 +970,16 @@ class CMakeDomain(Domain):
     
     @property
     def objects(self):
-        for typ in self.object_types.keys():
-            for name, (node_id, docname, add_to_index) in self.data[typ].items():
-                yield (name, typ, node_id, docname, add_to_index)
+        for obj_type, type_entries in self.data["objects"].items():
+            for name, (node_id, docname, add_to_index) in type_entries.items():
+                yield (name, obj_type, node_id, docname, add_to_index)
     
     
     def get_objects(self):    
         #fullname, dispname, type, docname, anchor, priority
-        for typ in self.object_types.keys():
-            for name, (node_id, docname, _) in self.data[typ].items():
-                dispname = self.make_object_display_name(name, typ)
-                yield (name, dispname, typ, docname, node_id, 1)
+        for name, obj_type, node_id, docname, add_to_index in self.objects:
+            dispname = self.make_object_display_name(name, obj_type)
+            yield (name, dispname, obj_type, docname, node_id, 1)
     
     
     def _warn_duplicate_object(self, name, typ, location):
@@ -992,9 +989,9 @@ class CMakeDomain(Domain):
         The location of the previous description is read from `self.data`.
         """
     
-        dispname = self.make_object_display_name(name, typ)
-        type_str = self.get_type_name(self.object_types[typ])
-        other_docname = self.data[typ][name][1]
+        dispname = self.make_object_display_name(name, obj_typ)
+        type_str = self.get_type_name(self.object_types[obj_typ])
+        other_docname = self.data["objects"][obj_type][name][1]
         
         _logger.warning(
             __("Duplicate description of {typ} {name}: "
@@ -1004,70 +1001,80 @@ class CMakeDomain(Domain):
             location = location)
     
     
-    def _make_refnode(self, env, name, typ, node_id, docname, builder,
+    def _make_refnode(self, env, name, obj_type, node_id, docname, builder,
             fromdocname, contnode):      
         """
         Helper function for generating reference nodes linking to entity
         descriptions.
         """
         
-        title = "{}: {}".format(self.get_type_name(self.object_types[typ]),
-            name)     
+        title = "{}: {}".format(
+            self.get_type_name(self.object_types[obj_type]), name)     
         return make_refnode(builder, fromdocname, docname, node_id, contnode,
             title)
     
     
-    def make_object_display_name(self, name, typ):
+    def make_object_display_name(self, name, obj_type):
         """Returns the displayed name for the given object."""
     
         # Display function names with parentheses if add_function_parentheses
         # is enabled
-        if typ == "function" and self.env.app.config.add_function_parentheses:
+        if (obj_type == "function" 
+                and self.env.app.config.add_function_parentheses):
             return name + "()"
         
         # Display module names with file extension if
         # cmake_modules_add_extension is enabled
-        if typ == "module" and self.env.app.config.cmake_modules_add_extension:
+        if (obj_type == "module" 
+                and self.env.app.config.cmake_modules_add_extension):
             return name + _module_ext
         
         return name
     
     
-    def register_object(self, name, typ, node_id, add_to_index, location):
+    def register_object(self, name, obj_type, node_id, add_to_index, location):
         """Called by our directives to register a documented entity."""
         
-        if name in self.data[typ]:
+        if not obj_type in self.object_types:
+            raise Exception(
+                __("'{str}' is not a known CMake object type").format(
+                    str = obj_type))
+        
+        if name in self.data["objects"][obj_type]:
             self._warn_duplicate_object(self, name, location)
             return
 
-        self.data[typ][name] = (node_id, self.env.docname, add_to_index)
+        self.data["objects"][obj_type][name] = (
+            node_id, self.env.docname, add_to_index)
     
     
     def clear_doc(self, docname):
-        for typ in self.object_types.keys():
-            for name, (_, obj_docname, _) in list(self.data[typ].items()):
+        for obj_type in self.object_types.keys():
+            for name, (_, obj_docname, _) in (
+                    list(self.data["objects"][obj_type].items())):
                 if obj_docname == docname:
-                    del self.data[typ][name] 
+                    del self.data["objects"][obj_type][name] 
     
     
     def merge_domaindata(self, docnames, otherdata):
-        for typ in self.object_types.keys():
-            for name, obj in otherdata[typ].items():
+        for obj_type in self.object_types.keys():
+            for name, obj in otherdata["objects"][obj_type].items():
                 if obj[1] in docnames:
-                    if name in self.data[typ]:
-                        self._warn_duplicate_object(name, typ, location)
+                    if name in self.data["objects"][obj_type]:
+                        self._warn_duplicate_object(name, obj_type, location)
                         continue
                 
-                    self.data[typ][name] = obj
+                    self.data["objects"][obj_type][name] = obj
     
     
-    def resolve_xref(self, env, fromdocname, builder, typ, target, node,
+    def resolve_xref(self, env, fromdocname, builder, xref_type, target, node,
             contnode):
-        typ = self._xref_type_to_object_type[typ]    
+        obj_type = self._xref_type_to_object_type[xref_type]    
         
-        for name, (node_id, docname, _) in self.data[typ].items():
+        for name, (node_id, docname, _) in (
+                self.data["objects"][obj_type].items()):
             if name == target:
-                return self._make_refnode(env, name, typ, node_id, docname,
+                return self._make_refnode(env, name, obj_type, node_id, docname,
                     builder, fromdocname, contnode)
         
         return None
@@ -1095,8 +1102,8 @@ class CMakeDomain(Domain):
         # If we can't determine the entity type from the target string,
         # try all entity types
         resolved_nodes = []
-        for typ, obj_type in self.object_types.items():
-            role = obj_type.roles[0]
+        for _, obj_type_obj in self.object_types.items():
+            role = obj_type_obj.roles[0]
             resolved = self.resolve_xref(env, fromdocname, builder, role,
                 target, node, contnode)
             if resolved is not None:
@@ -1137,3 +1144,4 @@ def setup(app):
         "parallel_read_safe": True,
         "parallel_write_safe": True
     }
+

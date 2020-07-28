@@ -76,9 +76,13 @@ msgstr ""
 msgid "target"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:1000
+#: sphinx_ext/cmake_domain.py:997
 msgid ""
 "Duplicate description of {typ} {name}: Previously described in "
 "{other_docname}. Use :noindex: with one of them."
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:1040
+msgid "'{str}' is not a known CMake object type"
 msgstr ""
 

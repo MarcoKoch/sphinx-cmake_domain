@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version:  0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/marcokoch/sphinx-"
 "cmake_domain/issues\n"
-"POT-Creation-Date: 2020-07-21 16:25+0200\n"
-"PO-Revision-Date: 2020-07-19 06:28+0200\n"
+"POT-Creation-Date: 2020-07-28 19:12+0200\n"
+"PO-Revision-Date: 2020-07-28 19:13+0200\n"
 "Last-Translator: Marco Koch <marco-koch@t-online.de>\n"
 "Language: de\n"
 "Language-Team: de <marco-koch@t-online.de>\n"
@@ -104,11 +104,15 @@ msgstr "Modul"
 msgid "target"
 msgstr "Ziel"
 
-#: sphinx_ext/cmake_domain.py:1000
+#: sphinx_ext/cmake_domain.py:997
 msgid ""
 "Duplicate description of {typ} {name}: Previously described in "
 "{other_docname}. Use :noindex: with one of them."
 msgstr ""
 "Mehrfache Beschreibung von {typ} {name}: Zuvor beschrieben in "
 "{other_docname}. Nutzen Sie :noindex: mit einer der Beschreibungen."
+
+#: sphinx_ext/cmake_domain.py:1040
+msgid "'{str}' is not a known CMake object type"
+msgstr "'{str}' ist kein bekannter CMake-Objekttyp"
 
