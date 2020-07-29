@@ -31,6 +31,7 @@
 
 import re
 from collections import defaultdict
+from importlib.metadata import version, PackageNotFoundError
 from os import path
 
 from docutils import nodes
@@ -49,9 +50,12 @@ from sphinx.util.nodes import (
     get_node_line, get_node_source, make_id, make_refnode, traverse_parent)
 
 
-__version__ = "0.9.0-beta"
-__author__ = "Marco Koch"
-__license__ = "BSD 3-Clause"
+try:
+    __version__ = version(__name__)
+except PackageNotFoundError:
+    # The package is not installed
+    from setuptools_scm import get_version
+    __version__ = get_version(root = "..", relative_to = __file__)
 
 
 # Optional extension for module names
