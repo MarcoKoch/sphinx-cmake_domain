@@ -1,2 +1,5 @@
 # Default to treating all files as text with automatic line break handling
 * text=auto
+
+# Substitute information in .git_archival.txt during source export
+.git_archival.txt export-subst
