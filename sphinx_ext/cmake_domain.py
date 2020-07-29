@@ -51,7 +51,7 @@ from sphinx.util.nodes import (
 
 
 try:
-    __version__ = version(__name__)
+    __version__ = version("sphinx-cmake_domain")
 except PackageNotFoundError:
     # The package is not installed
     from setuptools_scm import get_version
