@@ -914,7 +914,7 @@ class CMakeIndex(Index):
                         type_str, "", ""))
             else:
                 # There is only one entry with this name
-                typ, node_id, docname = data[0]
+                obj_type, node_id, docname = data[0]
                 dispname = self.domain.make_object_display_name(name, obj_type)
                 type_str = self.domain.get_type_name(
                     self.domain.object_types[obj_type])
