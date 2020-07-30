@@ -883,11 +883,12 @@ class CMakeIndex(Index):
     
     
     def generate(self, docnames = None):
-        # name -> [typ, node_id, docname]
+        # name -> [obj_type, node_id, docname]
         entries = defaultdict(list)
-        for name, typ, node_id, docname, add_to_index in self.domain.objects:
+        for name, obj_type, node_id, docname, add_to_index in (
+                self.domain.objects):
             if add_to_index and (docnames is None or docname in docnames):
-                entries[name].append((typ, node_id, docname))
+                entries[name].append((obj_type, node_id, docname))
         
         # Sort by index name
         entries = sorted(entries.items(),
@@ -899,23 +900,24 @@ class CMakeIndex(Index):
         for name, data in entries:
             key = _get_index_sort_str(self.domain.env, name)[0].upper()
             if len(data) > 1:
-                # There are multiple entity descriptions with the same name.
+                # There are multiple object descriptions with the same name.
                 # Create an 'empty' toplevel entry with a sub-entry for each
-                # entity description.
+                # description.
                 content[key].append((name, 1, "", "", "", "", ""))
                 
-                for typ, node_id, docname in data:
-                    dispname = self.domain.make_object_display_name(name, typ)             
+                for obj_type, node_id, docname in data:
+                    dispname = self.domain.make_object_display_name(
+                        name, obj_type)             
                     type_str = self.domain.get_type_name(
-                        self.domain.object_types[typ])
+                        self.domain.object_types[obj_type])
                     content[key].append((dispname, 2, docname, node_id,
                         type_str, "", ""))
             else:
                 # There is only one entry with this name
                 typ, node_id, docname = data[0]
-                dispname = self.domain.make_object_display_name(name, typ)
+                dispname = self.domain.make_object_display_name(name, obj_type)
                 type_str = self.domain.get_type_name(
-                    self.domain.object_types[typ])
+                    self.domain.object_types[obj_type])
                 content[key].append((dispname, 0, docname, node_id, type_str,
                     "", ""))
         
