@@ -886,7 +886,7 @@ class CMakeIndex(Index):
         # name -> [typ, node_id, docname]
         entries = defaultdict(list)
         for name, typ, node_id, docname, add_to_index in self.domain.objects:
-            if add_to_index:
+            if add_to_index and (docnames is None or docname in docnames):
                 entries[name].append((typ, node_id, docname))
         
         # Sort by index name
