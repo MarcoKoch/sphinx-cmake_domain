@@ -528,7 +528,7 @@ class CMakeObjectDescription(ObjectDescription):
         domain = self.env.get_domain("cmake")
         
         # Set the node ID that is used for referencing the node
-        node_id = make_id(self.env, self.state.document, "", name)
+        node_id = make_id(self.env, self.state.document, "cmake", name)
         signode["ids"].append(node_id)        
         self.state.document.note_explicit_target(signode)
               
