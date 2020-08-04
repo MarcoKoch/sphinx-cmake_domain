@@ -985,7 +985,7 @@ class CMakeDomain(Domain):
             yield (name, dispname, obj_type, docname, node_id, 1)
     
     
-    def _warn_duplicate_object(self, name, typ, location):
+    def _warn_duplicate_object(self, name, obj_type, location):
         """
         Logs a warning that the given object is described in multiple locations.
         
@@ -1007,8 +1007,8 @@ class CMakeDomain(Domain):
     def _make_refnode(self, env, name, obj_type, node_id, docname, builder,
             fromdocname, contnode):      
         """
-        Helper function for generating reference nodes linking to entity
-        descriptions.
+        Helper function for generatinga  reference node linking to an object
+        description.
         """
         
         title = "{}: {}".format(
