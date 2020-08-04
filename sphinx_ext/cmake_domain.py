@@ -514,7 +514,7 @@ class CMakeObjectDescription(ObjectDescription):
     
     
     def handle_signature(self, sig, signode):
-        domain = self.env.get_domain("cmake")
+        domain = self.env.get_domain(self.domain)
     
         # By default, just use the entire signature as object name
         name = sig
@@ -525,7 +525,7 @@ class CMakeObjectDescription(ObjectDescription):
     
     
     def add_target_and_index(self, name, sig, signode):
-        domain = self.env.get_domain("cmake")
+        domain = self.env.get_domain(self.domain)
         
         # Set the node ID that is used for referencing the node
         node_id = make_id(self.env, self.state.document, "cmake", name)
@@ -566,7 +566,7 @@ class CMakeVariableDescription(CMakeObjectDescription):
     
     
     def handle_signature(self, sig, signode):
-        domain = self.env.get_domain("cmake")
+        domain = self.env.get_domain(self.domain)
     
         sig_match = self._sig_regex.fullmatch(sig)
         if sig_match is None:
