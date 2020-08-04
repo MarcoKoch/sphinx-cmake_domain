@@ -981,8 +981,8 @@ class CMakeDomain(Domain):
         The location of the previous description is read from `self.data`.
         """
     
-        dispname = self.make_object_display_name(name, obj_typ)
-        type_str = self.get_type_name(self.object_types[obj_typ])
+        dispname = self.make_object_display_name(name, obj_type)
+        type_str = self.get_type_name(self.object_types[obj_type])
         other_docname = self.data["objects"][obj_type][name][1]
         
         _logger.warning(
