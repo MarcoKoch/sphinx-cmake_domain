@@ -573,8 +573,7 @@ class CMakeVariableDescription(CMakeObjectDescription):
             _logger.error(
                 __("Invalid variable signature: {sig}").format(sig = sig),
                 location = signode)
-            signode += desc_name(text = sig)
-            return sig
+            raise ValueError
         
         name = sig_match["name"]
         value = sig_match["value"]
@@ -792,8 +791,7 @@ class CMakeFunctionDescription(CMakeObjectDescription):
             _logger.error(
                 __("Invalid macro/function signature: {sig}".format(sig = sig)),
                 location = signode)
-            signode += desc_name(text = sig)
-            return sig
+            raise ValueError
         
         name = base_match["name"]
         params = base_match["params"]
@@ -809,8 +807,7 @@ class CMakeFunctionDescription(CMakeObjectDescription):
                 __("Failed to parse parameters for macro/function {name}: "
                     "{msg}").format(name = name, msg = str(ex)),
                 location = signode)
-            signode += desc_name(text = sig)
-            return name
+            raise ValueError
         
         signode += desc_name(text = name)
         signode += paramlist
