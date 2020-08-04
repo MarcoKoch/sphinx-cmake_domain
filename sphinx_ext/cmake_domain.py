@@ -960,17 +960,6 @@ class CMakeDomain(Domain):
     }
     
     
-    # Maps the type of a xref role to the entity type referenced by that role
-    # (as used in object_types).
-    _xref_type_to_object_type = {
-        "var": "variable",
-        "func": "function",
-        "macro": "function",
-        "mod": "module",
-        "tgt": "target"
-    }
-    
-    
     @property
     def objects(self):
         for obj_type, type_entries in self.data["objects"].items():
@@ -1015,6 +1004,18 @@ class CMakeDomain(Domain):
             self.get_type_name(self.object_types[obj_type]), name)     
         return make_refnode(builder, fromdocname, docname, node_id, contnode,
             title)
+    
+    
+    def _get_object_type_for_xref_role(self, role_name):
+        """Returns the object type that is referenced by the given xref."""
+        
+        for obj_type, obj_type_obj in self.object_types.items():
+            if role_name in obj_type_obj.roles:
+                return obj_type
+        
+        raise IndexError(
+            __("Xref role '{role}' does not reference an object type from the "
+                "CMake domain").format(role = role_name))
     
     
     def make_object_display_name(self, name, obj_type):
@@ -1072,7 +1073,7 @@ class CMakeDomain(Domain):
     
     def resolve_xref(self, env, fromdocname, builder, xref_type, target, node,
             contnode):
-        obj_type = self._xref_type_to_object_type[xref_type]    
+        obj_type = self._get_object_type_for_xref_role(xref_type) 
         
         for name, (node_id, docname, _) in (
                 self.data["objects"][obj_type].items()):

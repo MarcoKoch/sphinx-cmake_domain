@@ -1,88 +1,92 @@
-#: sphinx_ext/cmake_domain.py:272
+#: sphinx_ext/cmake_domain.py:276
 msgid ""
 "A node of type {node_type} was encountered outside a "
 "{paramlist_node_type}."
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:300
+#: sphinx_ext/cmake_domain.py:304
 msgid ""
 "Encountered nested {paramlist_node_type} nodes. Outer node defined here: "
 "{source_file}, {line}"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:482
+#: sphinx_ext/cmake_domain.py:486
 msgid ""
 "depart_node() called on this node without previous call to visit_node() "
 "with the same translator"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:552
+#: sphinx_ext/cmake_domain.py:556
 msgid "Type"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:553
+#: sphinx_ext/cmake_domain.py:557
 msgid "Default value"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:570
+#: sphinx_ext/cmake_domain.py:574
 msgid "Invalid variable signature: {sig}"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:593
+#: sphinx_ext/cmake_domain.py:596
 msgid "Parameters"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:630
+#: sphinx_ext/cmake_domain.py:633
 msgid "Unexpected text at column {pos}: {unexpected}"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:639
+#: sphinx_ext/cmake_domain.py:642
 msgid "Unexpected token at position {pos}: {raw} ({token_type})"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:782
+#: sphinx_ext/cmake_domain.py:785
 msgid "Unexpected end of parameter list"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:789
+#: sphinx_ext/cmake_domain.py:792
 msgid "Invalid macro/function signature: {sig}"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:805
+#: sphinx_ext/cmake_domain.py:807
 msgid "Failed to parse parameters for macro/function {name}: {msg}"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:877
+#: sphinx_ext/cmake_domain.py:878
 msgid "CMake Index"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:878 sphinx_ext/cmake_domain.py:931
+#: sphinx_ext/cmake_domain.py:879 sphinx_ext/cmake_domain.py:934
 msgid "CMake"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:942
+#: sphinx_ext/cmake_domain.py:945
 msgid "variable"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:943
+#: sphinx_ext/cmake_domain.py:946
 msgid "macro/function"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:944
+#: sphinx_ext/cmake_domain.py:947
 msgid "module"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:945
+#: sphinx_ext/cmake_domain.py:948
 msgid "target"
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:997
+#: sphinx_ext/cmake_domain.py:989
 msgid ""
 "Duplicate description of {typ} {name}: Previously described in "
 "{other_docname}. Use :noindex: with one of them."
 msgstr ""
 
-#: sphinx_ext/cmake_domain.py:1040
+#: sphinx_ext/cmake_domain.py:1017
+msgid "Xref role '{role}' does not reference an object type from the CMake domain"
+msgstr ""
+
+#: sphinx_ext/cmake_domain.py:1044
 msgid "'{str}' is not a known CMake object type"
 msgstr ""
 
