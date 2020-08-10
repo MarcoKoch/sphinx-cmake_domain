@@ -28,7 +28,13 @@ Documenting variables
 .. cmake:var:: NOT_INDEXED
     :noindex:
 
-    This variable should not appear in any index.
+    This variable should not appear on any index.
+    
+    :value ``WANT_ON_THE_INDEX``:
+        This variable really wants on the index.
+    
+    :value ``SADNESS``:
+        Why can't you just index it?
 
 
 .. cmake:var:: NOT_LISTED_ON_INDEX

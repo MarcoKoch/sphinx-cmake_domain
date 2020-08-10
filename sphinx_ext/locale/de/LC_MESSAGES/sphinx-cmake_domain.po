@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/marcokoch/sphinx-cmake_domain/issues\n"
-"POT-Creation-Date: 2020-08-04 09:46+0200\n"
-"PO-Revision-Date: 2020-08-04 09:49+0200\n"
+"POT-Creation-Date: 2020-08-10 18:55+0200\n"
+"PO-Revision-Date: 2020-08-10 18:56+0200\n"
 "Last-Translator: Marco Koch <marco-koch@t-online.de>\n"
 "Language: de\n"
 "Language-Team: de <marco-koch@t-online.de>\n"
@@ -51,59 +51,63 @@ msgstr "Typ"
 msgid "Default value"
 msgstr "Standardwert"
 
-#: sphinx_ext/cmake_domain.py:574
+#: sphinx_ext/cmake_domain.py:559
+msgid "Possible values"
+msgstr "Mögliche Werte"
+
+#: sphinx_ext/cmake_domain.py:575
 msgid "Invalid variable signature: {sig}"
 msgstr "Unzulässige Variablensignatur: {sig}"
 
-#: sphinx_ext/cmake_domain.py:596
+#: sphinx_ext/cmake_domain.py:597
 msgid "Parameters"
 msgstr "Parameter"
 
-#: sphinx_ext/cmake_domain.py:633
+#: sphinx_ext/cmake_domain.py:634
 msgid "Unexpected text at column {pos}: {unexpected}"
 msgstr "Unerwarteter Text in Spalte {pos}: {unexpected}"
 
-#: sphinx_ext/cmake_domain.py:642
+#: sphinx_ext/cmake_domain.py:643
 msgid "Unexpected token at position {pos}: {raw} ({token_type})"
 msgstr "Unerwarteter Token an Position {pos}: {raw} ({token_type})"
 
-#: sphinx_ext/cmake_domain.py:785
+#: sphinx_ext/cmake_domain.py:786
 msgid "Unexpected end of parameter list"
 msgstr "Unerwartetes Ende der Parameterliste"
 
-#: sphinx_ext/cmake_domain.py:792
+#: sphinx_ext/cmake_domain.py:793
 msgid "Invalid macro/function signature: {sig}"
 msgstr "Unzulässige Makro-/Funktionssignatur: {sig}"
 
-#: sphinx_ext/cmake_domain.py:807
+#: sphinx_ext/cmake_domain.py:808
 msgid "Failed to parse parameters for macro/function {name}: {msg}"
 msgstr "Fehler beim Einlesen der Parameter des Makros/der Funktion {name}: {msg}"
 
-#: sphinx_ext/cmake_domain.py:878
+#: sphinx_ext/cmake_domain.py:879
 msgid "CMake Index"
 msgstr "CMake-Index"
 
-#: sphinx_ext/cmake_domain.py:879 sphinx_ext/cmake_domain.py:934
+#: sphinx_ext/cmake_domain.py:880 sphinx_ext/cmake_domain.py:935
 msgid "CMake"
 msgstr "CMake"
 
-#: sphinx_ext/cmake_domain.py:945
+#: sphinx_ext/cmake_domain.py:946
 msgid "variable"
 msgstr "Variable"
 
-#: sphinx_ext/cmake_domain.py:946
+#: sphinx_ext/cmake_domain.py:947
 msgid "macro/function"
 msgstr "Makro/Funktion"
 
-#: sphinx_ext/cmake_domain.py:947
+#: sphinx_ext/cmake_domain.py:948
 msgid "module"
 msgstr "Modul"
 
-#: sphinx_ext/cmake_domain.py:948
+#: sphinx_ext/cmake_domain.py:949
 msgid "target"
 msgstr "Ziel"
 
-#: sphinx_ext/cmake_domain.py:989
+#: sphinx_ext/cmake_domain.py:990
 msgid ""
 "Duplicate description of {typ} {name}: Previously described in {other_docname}. "
 "Use :noindex: with one of them."
@@ -111,11 +115,11 @@ msgstr ""
 "Mehrfache Beschreibung von {typ} {name}: Zuvor beschrieben in {other_docname}. "
 "Nutzen Sie :noindex: mit einer der Beschreibungen."
 
-#: sphinx_ext/cmake_domain.py:1017
+#: sphinx_ext/cmake_domain.py:1018
 msgid "Xref role '{role}' does not reference an object type from the CMake domain"
 msgstr ""
 "Querverweisrolle '{role}' referenziert keinen Objekttypus aus der CMake-Domäne"
 
-#: sphinx_ext/cmake_domain.py:1044
+#: sphinx_ext/cmake_domain.py:1045
 msgid "'{str}' is not a known CMake object type"
 msgstr "'{str}' ist kein bekannter CMake-Objekttyp"

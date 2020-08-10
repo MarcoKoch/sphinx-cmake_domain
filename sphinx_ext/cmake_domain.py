@@ -553,9 +553,10 @@ class CMakeVariableDescription(CMakeObjectDescription):
     """Directive describing a CMake variable."""
     
     doc_field_types = [
-        Field("type", names = ["type",], label = _("Type"), has_arg = False),
+        Field("type", names = ("type",), label = _("Type"), has_arg = False),
         Field("default", names = ("default",), label = _("Default value"),
-            has_arg = False)
+            has_arg = False),
+        GroupedField("value", names = ("value",), label = _("Possible values"))
     ]
     
     object_type = "variable"

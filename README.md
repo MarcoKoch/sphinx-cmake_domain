@@ -70,10 +70,11 @@ The following options are supported:
 
 The following doc fields are supported:
 
-| Field       | Description                       |
-|-------------|-----------------------------------|
-| `:type:`    | Type of a cache variable          |
-| `:default:` | Default value of a cache variable |
+| Field       | Description                                                         |
+|-------------|---------------------------------------------------------------------|
+| `:type:`    | Type of a cache variable                                            |
+| `:default:` | Default value of a cache variable                                   |
+| `:value:`   | Documents a possible value of the variable. Can be used repeatedly. |
 
 
 ### Documenting macros/functions
