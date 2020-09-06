@@ -1046,7 +1046,7 @@ class CMakeDomain(Domain):
                     str = obj_type))
         
         if name in self.data["objects"][obj_type]:
-            self._warn_duplicate_object(self, name, location)
+            self._warn_duplicate_object(name, location)
             return
 
         self.data["objects"][obj_type][name] = (
