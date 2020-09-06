@@ -975,7 +975,7 @@ class CMakeDomain(Domain):
             yield (name, dispname, obj_type, docname, node_id, 1)
     
     
-    def _warn_duplicate_object(self, name, obj_type, location):
+    def _warn_duplicate_object(self, name, obj_type, location = None):
         """
         Logs a warning that the given object is described in multiple locations.
         
@@ -1066,7 +1066,7 @@ class CMakeDomain(Domain):
             for name, obj in otherdata["objects"][obj_type].items():
                 if obj[1] in docnames:
                     if name in self.data["objects"][obj_type]:
-                        self._warn_duplicate_object(name, obj_type, location)
+                        self._warn_duplicate_object(name, obj_type)
                         continue
                 
                     self.data["objects"][obj_type][name] = obj
